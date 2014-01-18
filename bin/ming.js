@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, auth, rawBody, mongo, ming, Q, getDatabase, raw, app;
+    var argv, express, corser, rawBody, dataSource, ming, app;
 
     argv = require("optimist")
              .options("port", {
@@ -17,36 +17,9 @@
              .argv;
     express = require("express");
     corser = require("corser");
-    auth = require("basic-auth");
     rawBody = require("raw-body");
-    mongo = require("mongodb");
-    ming = require("../lib/ming");
-    Q = require("q");
-
-    getDatabase = function () {
-        var deferred = Q.defer();
-        mongo.MongoClient.connect(argv["connection-string"], function (err, db) {
-            if (err !== null) {
-                deferred.reject(err);
-            } else {
-                deferred.resolve(db);
-            }
-        });
-        return deferred.promise;
-    };
-
-    raw = function () {
-        return function (req, res, next) {
-            rawBody(req, function (err, buffer) {
-                if (err !== null) {
-                    next(err);
-                } else {
-                    req.body = buffer;
-                    next();
-                }
-            });
-        };
-    };
+    dataSource = require("../lib/data-source")(argv["connection-string"]);
+    ming = require("../lib/ming")(dataSource);
 
     app = express();
 
@@ -68,52 +41,19 @@
             }
         });
 
-     // Prepare database for this request.
-        app.use(function (req, res, next) {
-            getDatabase().then(function (db) {
-                req.db = db;
-                next();
-            }, function (err) {
-                next(err);
-            });
-        });
-
-     // Basic auth.
-        app.use(function (req, res, next) {
-            var unauthorized, user;
-            unauthorized = function () {
-                req.db.close();
-                res.setHeader("WWW-Authenticate", "Basic realm=\"Ming\"");
-                res.send(401, "Unauthorized");
-            };
-            user = auth(req);
-            if (user === undefined) {
-                unauthorized();
-            } else {
-                req.db.authenticate(user.name, user.pass, function (err, result) {
-                    if (err !== null || result === false) {
-                        unauthorized();
-                    } else {
-                        next();
-                    }
-                });
-            }
-        });
+     // Authenticate user.
+        app.use(ming.authenticate);
 
      // Deploy routes.
         app.use(app.router);
 
-     // 404 handler.
+     // Handle missing pages.
         app.use(function (req, res) {
-            req.db.close();
             res.send(404, "Not Found");
         });
 
-     // 500 handler (signature must not be changed).
+     // Handle errors (signature must not be changed).
         app.use(function (err, req, res, next) {
-            if (req.hasOwnProperty("db") === true) {
-                req.db.close();
-            }
             res.send(500, "Internal Server Error");
         });
 
@@ -125,7 +65,16 @@
     app.get("/:collection/:document", ming.getDocument);
     app.get("/:collection/:document/:field", ming.getField);
     app.post("/:collection/query", express.json(), ming.query);
-    app.post("/:prefix.files", raw(), ming.insertFile);
+    app.post("/:prefix.files", function (req, res, next) {
+        rawBody(req, function (err, buffer) {
+            if (err !== null) {
+                next(err);
+            } else {
+                req.body = buffer;
+                next();
+            }
+        });
+    }, ming.insertFile);
     app.post("/:collection", express.json(), ming.insertDocument);
     app.patch("/:collection/:document", express.json(), ming.updateDocument);
     app.delete("/:prefix.files/:file", ming.deleteFile);
