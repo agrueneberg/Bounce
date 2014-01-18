@@ -19,7 +19,9 @@
     corser = require("corser");
     rawBody = require("raw-body");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
-    ming = require("../lib/ming")(dataSource);
+    ming = require("../lib/ming")({
+        dataSource: dataSource
+    });
 
     app = express();
 
