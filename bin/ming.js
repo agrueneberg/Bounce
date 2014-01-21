@@ -14,6 +14,10 @@
                  default: "mongodb://localhost/ming",
                  describe: "MongoDB Connection String for the default deployment."
              })
+             .options("user-collection", {
+                 default: "users",
+                 describe: "Collection to store user information in."
+             })
              .argv;
     express = require("express");
     corser = require("corser");
@@ -21,7 +25,8 @@
     rawBody = require("raw-body");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
     ming = require("../lib/ming")({
-        dataSource: dataSource
+        dataSource: dataSource,
+        userCollection: argv["user-collection"]
     });
 
     app = express();
