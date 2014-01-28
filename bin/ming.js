@@ -156,7 +156,7 @@
                     next();
                 } else {
                  // Check if user has permission to see the document.
-                    if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+                    if (document.ming.read.indexOf(req.user._id) === -1) {
                         next({
                             name: "Forbidden",
                             statusCode: 403,
@@ -179,7 +179,7 @@
                 next(err);
             } else {
              // Check if user has permission to see the document.
-                if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+                if (document.ming.read.indexOf(req.user._id) === -1) {
                     next({
                         name: "Forbidden",
                         statusCode: 403,
@@ -215,7 +215,7 @@
             } else {
              // Check if user has permission to see the documents.
                 documents = documents.filter(function (document) {
-                    if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+                    if (document.ming.read.indexOf(req.user._id) === -1) {
                         return false;
                     } else {
                         return true;
@@ -277,15 +277,15 @@
         if (document.ming.hasOwnProperty("read") === false) {
             document.ming.read = [];
         }
-        if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
-            document.ming.read.push(req.user._id.toHexString());
+        if (document.ming.read.indexOf(req.user._id) === -1) {
+            document.ming.read.push(req.user._id);
         }
      // Give creator write permission.
         if (document.ming.hasOwnProperty("write") === false) {
             document.ming.write = [];
         }
-        if (document.ming.write.indexOf(req.user._id.toHexString()) === -1) {
-            document.ming.write.push(req.user._id.toHexString());
+        if (document.ming.write.indexOf(req.user._id) === -1) {
+            document.ming.write.push(req.user._id);
         }
         ming.insertDocument(collectionParam, document, function (err, id) {
             if (err !== null) {
