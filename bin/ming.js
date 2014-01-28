@@ -243,6 +243,24 @@
         var collectionParam, document;
         collectionParam = req.params.collection;
         document = req.body;
+     // Prepare metadata object.
+        if (document.hasOwnProperty("ming") === false) {
+            document.ming = {};
+        }
+     // Give creator read permission.
+        if (document.ming.hasOwnProperty("read") === false) {
+            document.ming.read = [];
+        }
+        if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+            document.ming.read.push(req.user._id.toHexString());
+        }
+     // Give creator write permission.
+        if (document.ming.hasOwnProperty("write") === false) {
+            document.ming.write = [];
+        }
+        if (document.ming.write.indexOf(req.user._id.toHexString()) === -1) {
+            document.ming.write.push(req.user._id.toHexString());
+        }
         ming.insertDocument(collectionParam, document, function (err, id) {
             if (err !== null) {
                 next(err);
