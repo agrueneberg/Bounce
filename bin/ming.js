@@ -232,7 +232,19 @@
             });
         }
     });
-    app.post("/:collection", express.json(), function(req, res, next) {
+    app.post("/" + argv["user-collection"], express.json(), function (req, res, next) {
+        var user;
+        user = req.body;
+        ming.register(argv["user-collection"], user, function (err, id) {
+            if (err !== null) {
+                next(err);
+            } else {
+                res.location(argv["user-collection"] + "/" + id);
+                res.send(201, "Created");
+            }
+        });
+    });
+    app.post("/:collection", express.json(), function (req, res, next) {
         var collectionParam, document;
         collectionParam = req.params.collection;
         document = req.body;
