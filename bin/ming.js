@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, auth, rawBody, dataSource, ming, app;
+    var argv, express, corser, authParser, bodyParser, dataSource, ming, app, auth;
 
     argv = require("optimist")
              .options("port", {
@@ -17,14 +17,39 @@
              .argv;
     express = require("express");
     corser = require("corser");
-    auth = require("basic-auth");
-    rawBody = require("raw-body");
+    authParser = require("basic-auth");
+    bodyParser = require("raw-body");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
     ming = require("../lib/ming")({
         dataSource: dataSource
     });
 
     app = express();
+
+    auth = function (req, res, next) {
+        var unauthorized, credentials;
+        unauthorized = function () {
+            res.setHeader("WWW-Authenticate", "Basic realm=\"Ming\"");
+            res.send(401, "Unauthorized");
+        };
+        credentials = authParser(req);
+        if (credentials === undefined) {
+            unauthorized();
+        } else {
+            ming.authenticate(credentials, function (err, user) {
+                if (err !== null) {
+                    next(err);
+                } else {
+                    if (user === null) {
+                        unauthorized();
+                    } else {
+                        req.user = user;
+                        next();
+                    }
+                }
+            });
+        }
+    };
 
     app.configure(function () {
 
@@ -41,32 +66,6 @@
                 res.send(204);
             } else {
                 next();
-            }
-        });
-
-     // Authenticate user.
-        app.use(function (req, res, next) {
-            var unauthorized, credentials;
-            unauthorized = function () {
-                res.setHeader("WWW-Authenticate", "Basic realm=\"Ming\"");
-                res.send(401, "Unauthorized");
-            };
-            credentials = auth(req);
-            if (credentials === undefined) {
-                unauthorized();
-            } else {
-                ming.authenticate(credentials, function (err, user) {
-                    if (err !== null) {
-                        next(err);
-                    } else {
-                        if (user === null) {
-                            unauthorized();
-                        } else {
-                            req.user = user;
-                            next();
-                        }
-                    }
-                });
             }
         });
 
@@ -89,7 +88,7 @@
 
     });
 
-    app.get("/", function (req, res, next) {
+    app.get("/", auth, function (req, res, next) {
         ming.getCollections(function (err, collections) {
             if (err !== null) {
                 next(err);
@@ -100,7 +99,7 @@
             }
         });
     });
-    app.get("/:collection", function (req, res, next) {
+    app.get("/:collection", auth, function (req, res, next) {
         var collectionParam;
         collectionParam = req.params.collection;
         ming.getCollection(collectionParam, function (err, count) {
@@ -113,7 +112,7 @@
             }
         });
     });
-    app.get("/:prefix.files/:file", function (req, res, next) {
+    app.get("/:prefix.files/:file", auth, function (req, res, next) {
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
@@ -144,7 +143,7 @@
             });
         }
     });
-    app.get("/:collection/:document", function (req, res, next) {
+    app.get("/:collection/:document", auth, function (req, res, next) {
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
@@ -160,7 +159,7 @@
             }
         });
     });
-    app.get("/:collection/:document/:field", function (req, res, next) {
+    app.get("/:collection/:document/:field", auth, function (req, res, next) {
         var collectionParam, documentParam, fieldParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
@@ -177,7 +176,7 @@
             }
         });
     });
-    app.post("/:collection/query", express.json(), function (req, res, next) {
+    app.post("/:collection/query", [auth, express.json()], function (req, res, next) {
         var collectionParam, query, options;
         collectionParam = req.params.collection;
         query = req.body;
@@ -199,8 +198,8 @@
             }
         });
     });
-    app.post("/:prefix.files", function (req, res, next) {
-        rawBody(req, function (err, buffer) {
+    app.post("/:prefix.files", auth, function (req, res, next) {
+        bodyParser(req, function (err, buffer) {
             if (err !== null) {
                 next(err);
             } else {
@@ -239,7 +238,7 @@
             }
         });
     });
-    app.post("/:collection", express.json(), function (req, res, next) {
+    app.post("/:collection", [auth, express.json()], function (req, res, next) {
         var collectionParam, document;
         collectionParam = req.params.collection;
         document = req.body;
@@ -252,7 +251,7 @@
             }
         });
     });
-    app.patch("/:collection/:document", express.json(), function (req, res, next) {
+    app.patch("/:collection/:document", [auth, express.json()], function (req, res, next) {
         var collectionParam, documentParam, document;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
@@ -265,7 +264,7 @@
             }
         });
     });
-    app.delete("/:prefix.files/:file", function (req, res, next) {
+    app.delete("/:prefix.files/:file", auth, function (req, res, next) {
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
@@ -281,7 +280,7 @@
             }
         });
     });
-    app.delete("/:collection/:document", function (req, res, next) {
+    app.delete("/:collection/:document", auth, function (req, res, next) {
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
