@@ -79,8 +79,8 @@
 
      // Handle errors (signature must not be changed).
         app.use(function (err, req, res, next) {
-            if (err.message.indexOf("a single String of 12 bytes or a string of 24 hex characters") != -1) {
-                res.send(400, "Bad Request: Single String of 12 bytes or string of 24 hex characters expected");
+            if (err.hasOwnProperty("statusCode")) {
+                res.send(err.statusCode, err.name + ": " + err.message);
             } else {
                 console.error(err);
                 res.send(500, "Internal Server Error");
@@ -157,7 +157,11 @@
                 } else {
                  // Check if user has permission to see the document.
                     if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
-                        next(new Error("Permission denied."));
+                        next({
+                            name: "Forbidden",
+                            statusCode: 403,
+                            message: "You are not allowed to see this resource",
+                        });
                     } else {
                         res.send(document);
                     }
@@ -176,7 +180,11 @@
             } else {
              // Check if user has permission to see the document.
                 if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
-                    next(new Error("Permission denied"));
+                    next({
+                        name: "Forbidden",
+                        statusCode: 403,
+                        message: "You are not allowed to see this resource",
+                    });
                 } else {
                     if (document.hasOwnProperty(fieldParam) === false) {
                         next();
