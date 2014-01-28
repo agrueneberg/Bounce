@@ -82,6 +82,7 @@
             if (err.message.indexOf("a single String of 12 bytes or a string of 24 hex characters") != -1) {
                 res.send(400, "Bad Request: Single String of 12 bytes or string of 24 hex characters expected");
             } else {
+                console.error(err);
                 res.send(500, "Internal Server Error");
             }
         });
