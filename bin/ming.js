@@ -14,10 +14,6 @@
                  default: "mongodb://localhost/ming",
                  describe: "MongoDB Connection String for the default deployment."
              })
-             .options("user-collection", {
-                 default: "users",
-                 describe: "Collection to store user information in."
-             })
              .argv;
     express = require("express");
     corser = require("corser");
@@ -25,8 +21,7 @@
     rawBody = require("raw-body");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
     ming = require("../lib/ming")({
-        dataSource: dataSource,
-        userCollection: argv["user-collection"]
+        dataSource: dataSource
     });
 
     app = express();
@@ -232,14 +227,14 @@
             });
         }
     });
-    app.post("/" + argv["user-collection"], express.json(), function (req, res, next) {
+    app.post("/ming.users", express.json(), function (req, res, next) {
         var user;
         user = req.body;
-        ming.register(argv["user-collection"], user, function (err, id) {
+        ming.register(user, function (err, id) {
             if (err !== null) {
                 next(err);
             } else {
-                res.location(argv["user-collection"] + "/" + id);
+                res.location("ming.users/" + id);
                 res.send(201, "Created");
             }
         });
