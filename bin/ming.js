@@ -155,7 +155,12 @@
                 if (document === null) {
                     next();
                 } else {
-                    res.send(document);
+                 // Check if user has permission to see the document.
+                    if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+                        next(new Error("Permission denied."));
+                    } else {
+                        res.send(document);
+                    }
                 }
             }
         });
@@ -165,14 +170,19 @@
         collectionParam = req.params.collection;
         documentParam = req.params.document;
         fieldParam = req.params.field;
-        ming.getField(collectionParam, documentParam, fieldParam, function (err, field) {
+        ming.getDocument(collectionParam, documentParam, function (err, document) {
             if (err !== null) {
                 next(err);
             } else {
-                if (field === null) {
-                    next();
+             // Check if user has permission to see the document.
+                if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+                    next(new Error("Permission denied"));
                 } else {
-                    res.send(field);
+                    if (document.hasOwnProperty(fieldParam) === false) {
+                        next();
+                    } else {
+                        res.send(document[fieldParam]);
+                    }
                 }
             }
         });
