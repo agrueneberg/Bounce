@@ -35,6 +35,16 @@
 			],
 			"collection_name": "Ming",
 			"collection_id": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a"
+		},
+		{
+			"id": "478006a5-499d-e9f8-34bf-2af29c45565d",
+			"name": "Users",
+			"description": "",
+			"order": [
+				"d5608400-b3d6-0562-7073-fab2736e38e8"
+			],
+			"collection_name": "Ming",
+			"collection_id": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a"
 		}
 	],
 	"timestamp": 1390889610192,
@@ -131,11 +141,11 @@
 			"url": "{{deployment}}/<collection>",
 			"pathVariables": {},
 			"method": "POST",
-			"data": "{\n\t\n}",
+			"data": "{\n  \n}",
 			"dataMode": "raw",
 			"version": 2,
 			"tests": "",
-			"time": 1390939674275,
+			"time": 1390941928543,
 			"name": "Add document to collection",
 			"description": "`<collection>` is a collection name.",
 			"collectionId": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a",
@@ -171,6 +181,23 @@
 			"time": 1390939904331,
 			"name": "Add file to collection",
 			"description": "`<prefix>` is a GridFS prefix.",
+			"collectionId": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a",
+			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "d5608400-b3d6-0562-7073-fab2736e38e8",
+			"headers": "Content-Type: application/json\n",
+			"url": "{{deployment}}/ming.users",
+			"pathVariables": {},
+			"method": "POST",
+			"data": "{\n  \"username\": \"\",\n  \"password\": \"\"\n}",
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"time": 1390941945514,
+			"name": "Register user",
+			"description": "",
 			"collectionId": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a",
 			"responses": [],
 			"synced": false
@@ -219,8 +246,8 @@
 			"dataMode": "raw",
 			"version": 2,
 			"tests": "",
-			"time": 1390939881303,
-			"name": "Query fs collection",
+			"time": 1390941811235,
+			"name": "Query GridFS collection",
 			"description": "`<prefix>` is a GridFS prefix.",
 			"collectionId": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a",
 			"responses": [],
