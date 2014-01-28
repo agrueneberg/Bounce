@@ -213,6 +213,14 @@
             if (err !== null) {
                 next(err);
             } else {
+             // Check if user has permission to see the documents.
+                documents = documents.filter(function (document) {
+                    if (document.ming.read.indexOf(req.user._id.toHexString()) === -1) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
                 res.send(documents);
             }
         });
