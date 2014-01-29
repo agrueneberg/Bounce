@@ -253,15 +253,19 @@
         });
     });
     app.patch("/:collection/:document", [auth, express.json()], function (req, res, next) {
-        var collectionParam, documentParam, document;
+        var collectionParam, documentParam, update;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
-        document = req.body;
-        ming.updateDocument(collectionParam, documentParam, document, function (err) {
+        update = req.body;
+        ming.updateDocument(collectionParam, documentParam, update, req.user, function (err, updated) {
             if (err !== null) {
                 next(err);
             } else {
-                res.send(204, "No Content");
+                if (updated === true) {
+                    res.send(204, "No Content");
+                } else {
+                    next();
+                }
             }
         });
     });
