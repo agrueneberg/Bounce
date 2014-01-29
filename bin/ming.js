@@ -148,23 +148,14 @@
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
-        ming.getDocument(collectionParam, documentParam, function (err, document) {
+        ming.getDocument(collectionParam, documentParam, req.user, function (err, document) {
             if (err !== null) {
                 next(err);
             } else {
                 if (document === null) {
                     next();
                 } else {
-                 // Check if user has permission to see the document.
-                    if (document.ming.read.indexOf(req.user._id) === -1) {
-                        next({
-                            name: "Forbidden",
-                            statusCode: 403,
-                            message: "You are not allowed to see this resource",
-                        });
-                    } else {
-                        res.send(document);
-                    }
+                    res.send(document);
                 }
             }
         });
@@ -174,23 +165,14 @@
         collectionParam = req.params.collection;
         documentParam = req.params.document;
         fieldParam = req.params.field;
-        ming.getDocument(collectionParam, documentParam, function (err, document) {
+        ming.getField(collectionParam, documentParam, fieldParam, req.user, function (err, field) {
             if (err !== null) {
                 next(err);
             } else {
-             // Check if user has permission to see the document.
-                if (document.ming.read.indexOf(req.user._id) === -1) {
-                    next({
-                        name: "Forbidden",
-                        statusCode: 403,
-                        message: "You are not allowed to see this resource",
-                    });
+                if (field === null) {
+                    next();
                 } else {
-                    if (document.hasOwnProperty(fieldParam) === false) {
-                        next();
-                    } else {
-                        res.send(document[fieldParam]);
-                    }
+                    res.send(field);
                 }
             }
         });
@@ -209,18 +191,10 @@
         if (req.query.sort) {
             options.sort = req.query.sort;
         }
-        ming.query(collectionParam, options, function (err, documents) {
+        ming.query(collectionParam, query, options, req.user, function (err, documents) {
             if (err !== null) {
                 next(err);
             } else {
-             // Check if user has permission to see the documents.
-                documents = documents.filter(function (document) {
-                    if (document.ming.read.indexOf(req.user._id) === -1) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
                 res.send(documents);
             }
         });
@@ -269,25 +243,7 @@
         var collectionParam, document;
         collectionParam = req.params.collection;
         document = req.body;
-     // Prepare metadata object.
-        if (document.hasOwnProperty("ming") === false) {
-            document.ming = {};
-        }
-     // Give creator read permission.
-        if (document.ming.hasOwnProperty("read") === false) {
-            document.ming.read = [];
-        }
-        if (document.ming.read.indexOf(req.user._id) === -1) {
-            document.ming.read.push(req.user._id);
-        }
-     // Give creator write permission.
-        if (document.ming.hasOwnProperty("write") === false) {
-            document.ming.write = [];
-        }
-        if (document.ming.write.indexOf(req.user._id) === -1) {
-            document.ming.write.push(req.user._id);
-        }
-        ming.insertDocument(collectionParam, document, function (err, id) {
+        ming.insertDocument(collectionParam, document, req.user, function (err, id) {
             if (err !== null) {
                 next(err);
             } else {
