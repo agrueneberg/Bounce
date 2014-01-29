@@ -90,7 +90,7 @@
     });
 
     app.get("/", auth, function (req, res, next) {
-        ming.getCollections(function (err, collections) {
+        ming.getCollections(req.user, function (err, collections) {
             if (err !== null) {
                 next(err);
             } else {
