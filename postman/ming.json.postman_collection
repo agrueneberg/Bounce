@@ -16,6 +16,7 @@
 				"49f82d55-69c5-e2b0-7196-85894f9b35d3",
 				"a4367b76-995f-1e99-9124-bee12d324b32",
 				"969490fe-2442-27c3-1e26-efa77fb6f8cb",
+				"37d26461-89c9-133d-f079-1c13e3e01f1a",
 				"7935cfb3-d1a3-d64d-20a7-3994f806062f"
 			],
 			"collection_name": "Ming",
@@ -80,6 +81,23 @@
 			"time": 1390939579326,
 			"name": "Get collection",
 			"description": "`<collection>` is a collection name.",
+			"collectionId": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a",
+			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "37d26461-89c9-133d-f079-1c13e3e01f1a",
+			"headers": "Authorization: {{authorization}}\nContent-Type: application/json\n",
+			"url": "{{deployment}}/<collection>/<document>",
+			"pathVariables": {},
+			"method": "PATCH",
+			"data": "{\n  \n}",
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"time": 1390969903189,
+			"name": "Update document",
+			"description": "`<collection>` is a collection name.\n\n`<document>` is a MongoDB ObjectID.",
 			"collectionId": "8f1d6634-e9eb-e42a-1e3a-3ad69bace75a",
 			"responses": [],
 			"synced": false
