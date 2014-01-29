@@ -107,9 +107,13 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send({
-                    count: count
-                });
+                if (count === null) {
+                    next();
+                } else {
+                    res.send({
+                        count: count
+                    });
+                }
             }
         });
     });
