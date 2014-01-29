@@ -199,7 +199,11 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send(documents);
+                if (documents === null) {
+                    next();
+                } else {
+                    res.send(documents);
+                }
             }
         });
     });
