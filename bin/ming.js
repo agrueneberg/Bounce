@@ -285,7 +285,7 @@
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
-        ming.deleteDocument(collectionParam, documentParam, function (err, deleted) {
+        ming.deleteDocument(collectionParam, documentParam, req.user, function (err, deleted) {
             if (err !== null) {
                 next(err);
             } else {
