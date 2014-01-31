@@ -225,7 +225,7 @@
         if (file.length === 0) {
             res.send(400, "Bad Request: Empty body");
         } else {
-            ming.insertFile(prefixParam, contentType, file, function (err, id) {
+            ming.insertFile(prefixParam, contentType, file, req.user, function (err, id) {
                 if (err !== null) {
                     next(err);
                 } else {
