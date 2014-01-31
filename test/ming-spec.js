@@ -61,8 +61,8 @@ describe("Ming", function () {
 
         it("should throw an error if username is not known", function (done) {
             ming.authenticate({
-                name: "flash",
-                pass: "flash"
+                username: "flash",
+                password: "flash"
             }, function (err, user) {
                 expect(err).to.be(null);
                 expect(user).to.be(null);
@@ -72,8 +72,8 @@ describe("Ming", function () {
 
         it("should throw an error if password is wrong", function (done) {
             ming.authenticate({
-                name: "ming",
-                pass: "flash"
+                username: "ming",
+                password: "flash"
             }, function (err, user) {
                 expect(err).to.be(null);
                 expect(user).to.be(null);
@@ -83,8 +83,8 @@ describe("Ming", function () {
 
         it("should authenticate a user", function (done) {
             ming.authenticate({
-                name: "ming",
-                pass: "ming"
+                username: "ming",
+                password: "ming"
             }, function (err, user) {
                 expect(err).to.be(null);
                 expect(user.username).to.be("ming");
@@ -106,8 +106,8 @@ describe("Ming", function () {
                     password: "flash"
                 }, function () {
                     ming.authenticate({
-                        name: "ming",
-                        pass: "ming"
+                        username: "ming",
+                        password: "ming"
                     }, function (err, user) {
                         ming.insertDocument("planets", {
                             name: "Mongo"
@@ -119,8 +119,8 @@ describe("Ming", function () {
 
         it("should allow user ming access to the collection", function (done) {
             ming.authenticate({
-                name: "ming",
-                pass: "ming"
+                username: "ming",
+                password: "ming"
             }, function (err, user) {
                 ming.getCollections(user, function (err, collections) {
                     expect(err).to.be(null);
@@ -132,8 +132,8 @@ describe("Ming", function () {
 
         it("should deny user flash access to the collection", function (done) {
             ming.authenticate({
-                name: "flash",
-                pass: "flash"
+                username: "flash",
+                password: "flash"
             }, function (err, user) {
                 ming.getCollections(user, function (err, collections) {
                     expect(err).to.be(null);

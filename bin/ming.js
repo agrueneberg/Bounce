@@ -36,6 +36,11 @@
         if (credentials === undefined) {
             unauthorized();
         } else {
+         // Reformat credentials.
+            credentials.username = credentials.name;
+            delete credentials.name;
+            credentials.password = credentials.pass;
+            delete credentials.pass;
             ming.authenticate(credentials, function (err, user) {
                 if (err !== null) {
                     next(err);
