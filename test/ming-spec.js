@@ -565,6 +565,63 @@ describe("Ming", function () {
 
             });
 
+            describe("deleteDocument", function () {
+
+                it("should throw an error if documentName is not a valid ObjectID", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.deleteDocument("planets", "123", user, function (err) {
+                            expect(err.statusCode).to.be(400);
+                            done();
+                        });
+                    });
+                });
+
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.deleteDocument("system.users", "123", user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should allow user ming write access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.deleteDocument("planets", documentId, user, function (err, deleted) {
+                            expect(err).to.be(null);
+                            expect(deleted).to.be(true);
+                            ming.getDocument("planets", documentId, user, function (err, document) {
+                                expect(err).to.be(null);
+                                expect(document).to.be(null);
+                                done();
+                            });
+                        });
+                    });
+                });
+
+                it("should deny user flash write access to the document", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.deleteDocument("planets", documentId, user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+            });
+
         });
 
     });
