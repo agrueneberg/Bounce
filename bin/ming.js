@@ -122,7 +122,7 @@
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
         if (req.query.hasOwnProperty("binary") === true && req.query.binary === "true") {
-            ming.getFile(prefixParam, fileParam, function (err, file) {
+            ming.getFile(prefixParam, fileParam, req.user, function (err, file) {
                 if (err !== null) {
                     next(err);
                 } else {
