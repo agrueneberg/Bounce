@@ -94,7 +94,9 @@ describe("Ming", function () {
 
     });
 
-    describe("collections", function () {
+    describe("collections & documents", function () {
+
+        var documentId;
 
         beforeEach(function (done) {
             ming.register({
@@ -111,163 +113,240 @@ describe("Ming", function () {
                     }, function (err, user) {
                         ming.insertDocument("planets", {
                             name: "Mongo"
-                        }, user, done);
+                        }, user, function (err, id) {
+                            documentId = id;
+                            done();
+                        });
                     });
                 });
             });
         });
 
-        describe("getCollections", function () {
+        describe("collections", function () {
 
-            it("should allow user ming read access to the collection", function (done) {
-                ming.authenticate({
-                    username: "ming",
-                    password: "ming"
-                }, function (err, user) {
-                    ming.getCollections(user, function (err, collections) {
-                        expect(err).to.be(null);
-                        expect(collections).to.eql(["planets"]);
-                        done();
+            describe("getCollections", function () {
+
+                it("should allow user ming read access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getCollections(user, function (err, collections) {
+                            expect(err).to.be(null);
+                            expect(collections).to.eql(["planets"]);
+                            done();
+                        });
                     });
                 });
-            });
 
-            it("should deny user flash read access to the collection", function (done) {
-                ming.authenticate({
-                    username: "flash",
-                    password: "flash"
-                }, function (err, user) {
-                    ming.getCollections(user, function (err, collections) {
-                        expect(err).to.be(null);
-                        expect(collections).to.eql([]);
-                        done();
+                it("should deny user flash read access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.getCollections(user, function (err, collections) {
+                            expect(err).to.be(null);
+                            expect(collections).to.eql([]);
+                            done();
+                        });
                     });
                 });
+
             });
 
-        });
+            describe("getCollection", function () {
 
-        describe("getCollection", function () {
+                beforeEach(function (done) {
+                    ming.register({
+                        username: "aura",
+                        password: "aura"
+                    }, function (err, id) {
+                        ming.authenticate({
+                            username: "ming",
+                            password: "ming"
+                        }, function (err, user) {
+                            ming.getCollection("planets", user, function (err, collection) {
+                             // Strip _count.
+                                delete collection._count;
+                             // Add aura to readers.
+                                collection._permissions.read.push(id);
+                                ming.updateCollection("planets", collection, user, done);
+                            });
+                        });
+                    });
+                });
 
-            beforeEach(function (done) {
-                ming.register({
-                    username: "aura",
-                    password: "aura"
-                }, function (err, id) {
+                it("should throw an error if collection doesn't exist", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getCollection("lizards", user, function (err, collection) {
+                            expect(err).to.be(null);
+                            expect(collection).to.be(null);
+                            done();
+                        });
+                    });
+                });
+
+                it("should allow user ming read access to the collection and the document", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
                         ming.getCollection("planets", user, function (err, collection) {
-                         // Strip _count.
-                            delete collection._count;
-                         // Add aura to readers.
-                            collection._permissions.read.push(id);
-                            ming.updateCollection("planets", collection, user, done);
+                            expect(err).to.be(null);
+                            expect(collection).to.not.be(null);
+                            expect(collection._count).to.be(1);
+                            done();
                         });
                     });
                 });
-            });
 
-            it("should throw an error if collection doesn't exist", function (done) {
-                ming.authenticate({
-                    username: "ming",
-                    password: "ming"
-                }, function (err, user) {
-                    ming.getCollection("lizards", user, function (err, collection) {
-                        expect(err).to.be(null);
-                        expect(collection).to.be(null);
-                        done();
+                it("should allow user aura read access to the collection but not the document", function (done) {
+                    ming.authenticate({
+                        username: "aura",
+                        password: "aura"
+                    }, function (err, user) {
+                        ming.getCollection("planets", user, function (err, collection) {
+                            expect(err).to.be(null);
+                            expect(collection).to.not.be(null);
+                            expect(collection._count).to.be(0);
+                            done();
+                        });
                     });
                 });
-            });
 
-            it("should allow user ming read access to the collection and the document", function (done) {
-                ming.authenticate({
-                    username: "ming",
-                    password: "ming"
-                }, function (err, user) {
-                    ming.getCollection("planets", user, function (err, collection) {
-                        expect(err).to.be(null);
-                        expect(collection).to.not.be(null);
-                        expect(collection._count).to.be(1);
-                        done();
+                it("should deny user flash read access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.getCollection("planets", user, function (err, collection) {
+                            expect(err).to.not.be(null);
+                            done();
+                        });
                     });
                 });
+
             });
 
-            it("should allow user aura read access to the collection but not the document", function (done) {
-                ming.authenticate({
-                    username: "aura",
-                    password: "aura"
-                }, function (err, user) {
-                    ming.getCollection("planets", user, function (err, collection) {
-                        expect(err).to.be(null);
-                        expect(collection).to.not.be(null);
-                        expect(collection._count).to.be(0);
-                        done();
+            describe("updateCollection", function () {
+
+                it("should throw an error if collection doesn't exist", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.updateCollection("lizards", {}, user, function (err, updated) {
+                            expect(err).to.be(null);
+                            expect(updated).to.be(false);
+                            done();
+                        });
                     });
                 });
-            });
 
-            it("should deny user flash read access to the collection", function (done) {
-                ming.authenticate({
-                    username: "flash",
-                    password: "flash"
-                }, function (err, user) {
-                    ming.getCollection("planets", user, function (err, collection) {
-                        expect(err).to.not.be(null);
-                        done();
-                    });
-                });
-            });
-
-        });
-
-        describe("updateCollection", function () {
-
-            it("should throw an error if collection doesn't exist", function (done) {
-                ming.authenticate({
-                    username: "ming",
-                    password: "ming"
-                }, function (err, user) {
-                    ming.updateCollection("lizards", {}, user, function (err, updated) {
-                        expect(err).to.be(null);
-                        expect(updated).to.be(false);
-                        done();
-                    });
-                });
-            });
-
-            it("should allow user ming write access to the collection", function (done) {
-                ming.authenticate({
-                    username: "ming",
-                    password: "ming"
-                }, function (err, user) {
-                    ming.getCollection("planets", user, function (err, collection) {
-                     // Mark collection.
-                        collection.updated = true;
-                        ming.updateCollection("planets", collection, user, function (err, updated) {
-                            ming.getCollection("planets", user, function (err, updatedCollection) {
-                                expect(err).to.be(null);
-                                expect(updatedCollection.updated).to.be(true);
-                                done();
+                it("should allow user ming write access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getCollection("planets", user, function (err, collection) {
+                         // Mark collection.
+                            collection.updated = true;
+                            ming.updateCollection("planets", collection, user, function (err, updated) {
+                                ming.getCollection("planets", user, function (err, updatedCollection) {
+                                    expect(err).to.be(null);
+                                    expect(updatedCollection.updated).to.be(true);
+                                    done();
+                                });
                             });
                         });
                     });
                 });
-            });
 
-            it("should deny user flash write access to the collection", function (done) {
-                ming.authenticate({
-                    username: "flash",
-                    password: "flash"
-                }, function (err, user) {
-                    ming.updateCollection("planets", {}, user, function (err) {
-                        expect(err).to.not.be(null);
-                        done();
+                it("should deny user flash write access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.updateCollection("planets", {}, user, function (err) {
+                            expect(err).to.not.be(null);
+                            done();
+                        });
                     });
                 });
+
+            });
+
+        });
+
+        describe("documents", function () {
+
+            describe("getDocument", function () {
+
+                it("should throw an error if documentName is not a valid ObjectID", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", "123", user, function (err) {
+                            expect(err.statusCode).to.be(400);
+                            done();
+                        });
+                    });
+                });
+
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("system.users", "123", user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should throw an error if document doesn't exist", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", "52ebdb27b31667132ad4ae6c", user, function (err, document) {
+                            expect(err).to.be(null);
+                            expect(document).to.be(null);
+                            done();
+                        });
+                    });
+                });
+
+                it("should allow user ming read access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", documentId, user, function (err, document) {
+                            expect(err).to.be(null);
+                            expect(document.name).to.be("Mongo");
+                            done();
+                        });
+                    });
+                });
+
+                it("should deny user flash read access to the document", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.getDocument("planets", documentId, user, function (err) {
+                            expect(err).to.not.be(null);
+                            done();
+                        });
+                    });
+                });
+
             });
 
         });
