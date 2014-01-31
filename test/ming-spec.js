@@ -50,4 +50,48 @@ describe("Ming", function () {
 
     });
 
+    describe("authenticate", function () {
+
+        beforeEach(function (done) {
+            ming.register({
+                username: "ming",
+                password: "ming"
+            }, done);
+        });
+
+        it("should throw an error if username is not known", function (done) {
+            ming.authenticate({
+                name: "flash",
+                pass: "flash"
+            }, function (err, user) {
+                expect(err).to.be(null);
+                expect(user).to.be(null);
+                done();
+            });
+        });
+
+        it("should throw an error if password is wrong", function (done) {
+            ming.authenticate({
+                name: "ming",
+                pass: "flash"
+            }, function (err, user) {
+                expect(err).to.be(null);
+                expect(user).to.be(null);
+                done();
+            });
+        });
+
+        it("should authenticate a user", function (done) {
+            ming.authenticate({
+                name: "ming",
+                pass: "ming"
+            }, function (err, user) {
+                expect(err).to.be(null);
+                expect(user.username).to.be("ming");
+                done();
+            });
+        });
+
+    });
+
 });
