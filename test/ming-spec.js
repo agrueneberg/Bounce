@@ -96,17 +96,19 @@ describe("Ming", function () {
 
     describe("collections & documents", function () {
 
-        var documentId;
+        var documentId, userMingId, userFlashId;
 
         beforeEach(function (done) {
             ming.register({
                 username: "ming",
                 password: "ming"
-            }, function () {
+            }, function (err, id) {
+                userMingId = id;
                 ming.register({
                     username: "flash",
                     password: "flash"
-                }, function () {
+                }, function (err, id) {
+                    userFlashId = id;
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -409,6 +411,153 @@ describe("Ming", function () {
                                 expect(err).to.be(null);
                                 expect(collection._count).to.be(1);
                                 done();
+                            });
+                        });
+                    });
+                });
+
+            });
+
+            describe("updateDocument", function () {
+
+                it("should throw an error if documentName is not a valid ObjectID", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.updateDocument("planets", "123", {}, user, function (err) {
+                            expect(err.statusCode).to.be(400);
+                            done();
+                        });
+                    });
+                });
+
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.updateDocument("system.users", "123", {}, user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should allow user ming write access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", documentId, user, function (err, document) {
+                            document.name = "Mongo the Great";
+                            ming.updateDocument("planets", documentId, document, user, function (err, updated) {
+                                expect(err).to.be(null);
+                                expect(updated).to.be(true);
+                                ming.getDocument("planets", documentId, user, function (err, document) {
+                                    expect(err).to.be(null);
+                                    expect(document.name).to.be("Mongo the Great");
+                                    done();
+                                });
+                            });
+                        });
+                    });
+                });
+
+                it("should deny user flash write access to the document", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.updateDocument("planets", documentId, {
+                            name: "Mongo, Earth II"
+                        }, user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should be possible for user ming to allow user flash read access but no write access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", documentId, user, function (err, document) {
+                            document._permissions.read.push(userFlashId);
+                            ming.updateDocument("planets", documentId, document, user, function (err) {
+                                ming.authenticate({
+                                    username: "flash",
+                                    password: "flash"
+                                }, function (err, user) {
+                                    ming.getDocument("planets", documentId, user, function (err, document) {
+                                        expect(err).to.be(null);
+                                        expect(document.name).to.be("Mongo");
+                                        document.name = "Mongo, Earth II";
+                                        ming.updateDocument("planets", documentId, document, user, function (err) {
+                                            expect(err.statusCode).to.be(403);
+                                            done();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+
+                it("should be possible for user ming to allow user flash write access but no read access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", documentId, user, function (err, document) {
+                            document._permissions.read.push(userFlashId);
+                            document._permissions.write.push(userFlashId);
+                            ming.updateDocument("planets", documentId, document, user, function (err) {
+                                ming.authenticate({
+                                    username: "flash",
+                                    password: "flash"
+                                }, function (err, user) {
+                                    document.name = "Mongo, Earth II";
+                                    ming.updateDocument("planets", documentId, document, user, function (err, updated) {
+                                        expect(err).to.be(null);
+                                        expect(updated).to.be(true);
+                                        ming.getDocument("planets", documentId, user, function (err, document) {
+                                            expect(err).to.be(null);
+                                            expect(document.name).to.be("Mongo, Earth II");
+                                            done();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+
+                it("should be possible for user ming to allow user flash both read and write access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getDocument("planets", documentId, user, function (err, document) {
+                            document._permissions.read.push(userFlashId);
+                            document._permissions.write.push(userFlashId);
+                            ming.updateDocument("planets", documentId, document, user, function (err) {
+                                ming.authenticate({
+                                    username: "flash",
+                                    password: "flash"
+                                }, function (err, user) {
+                                    document.name = "Mongo, Earth II";
+                                    ming.updateDocument("planets", documentId, document, user, function (err, updated) {
+                                        expect(err).to.be(null);
+                                        expect(updated).to.be(true);
+                                        ming.getDocument("planets", documentId, user, function (err, document) {
+                                            expect(err).to.be(null);
+                                            expect(document.name).to.be("Mongo, Earth II");
+                                            done();
+                                        });
+                                    });
+                                });
                             });
                         });
                     });
