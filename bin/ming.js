@@ -281,7 +281,7 @@
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
-        ming.deleteFile(prefixParam, fileParam, function (err, deleted) {
+        ming.deleteFile(prefixParam, fileParam, req.user, function (err, deleted) {
             if (err !== null) {
                 next(err);
             } else {
