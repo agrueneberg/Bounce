@@ -135,7 +135,7 @@
                 }
             });
         } else {
-            ming.getDocument(prefixParam + ".files", fileParam, function (err, document) {
+            ming.getDocument(prefixParam + ".files", fileParam, req.user, function (err, document) {
                 if (err !== null) {
                     next(err);
                 } else {
