@@ -79,7 +79,7 @@
 
      // Handle errors (signature must not be changed).
         app.use(function (err, req, res, next) {
-            if (err.hasOwnProperty("statusCode")) {
+            if (err.hasOwnProperty("statusCode") === true) {
                 res.send(err.statusCode, err.name + ": " + err.message);
             } else {
                 console.error(err);
