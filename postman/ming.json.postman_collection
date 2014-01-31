@@ -90,7 +90,7 @@
 			"headers": "Authorization: {{authorization}}\nContent-Type: application/json\n",
 			"url": "{{deployment}}/<collection>/<document>",
 			"pathVariables": {},
-			"method": "PATCH",
+			"method": "PUT",
 			"data": "{\n  \n}",
 			"dataMode": "raw",
 			"version": 2,

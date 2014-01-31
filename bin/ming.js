@@ -55,7 +55,7 @@
 
      // Handle CORS.
         app.use(corser.create({
-            methods: corser.simpleMethods.concat(["DELETE", "PATCH"]),
+            methods: corser.simpleMethods.concat(["DELETE", "PUT"]),
             requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
             responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
         }));
@@ -260,7 +260,7 @@
             }
         });
     });
-    app.patch("/:collection/:document", [auth, express.json()], function (req, res, next) {
+    app.put("/:collection/:document", [auth, express.json()], function (req, res, next) {
         var collectionParam, documentParam, update;
         collectionParam = req.params.collection;
         documentParam = req.params.document;

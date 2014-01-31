@@ -43,7 +43,7 @@ API
 - `GET /:collection/:document/:field` retrieve field of document
 - `POST /:collection/query` query documents
 - `POST /:collection` create document
-- `PATCH /:collection/:document` update document
+- `PUT /:collection/:document` update document
 - `DELETE /:collection/:document` delete document
 
 #### Files (GridFS)
