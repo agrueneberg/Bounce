@@ -119,7 +119,7 @@ describe("Ming", function () {
 
         describe("getCollections", function () {
 
-            it("should allow user ming access to the collection", function (done) {
+            it("should allow user ming read access to the collection", function (done) {
                 ming.authenticate({
                     username: "ming",
                     password: "ming"
@@ -132,7 +132,7 @@ describe("Ming", function () {
                 });
             });
 
-            it("should deny user flash access to the collection", function (done) {
+            it("should deny user flash read access to the collection", function (done) {
                 ming.authenticate({
                     username: "flash",
                     password: "flash"
@@ -182,7 +182,7 @@ describe("Ming", function () {
                 });
             });
 
-            it("should allow user ming access to the collection and the document", function (done) {
+            it("should allow user ming read access to the collection and the document", function (done) {
                 ming.authenticate({
                     username: "ming",
                     password: "ming"
@@ -196,7 +196,7 @@ describe("Ming", function () {
                 });
             });
 
-            it("should allow user aura access to the collection but not the document", function (done) {
+            it("should allow user aura read access to the collection but not the document", function (done) {
                 ming.authenticate({
                     username: "aura",
                     password: "aura"
@@ -210,7 +210,7 @@ describe("Ming", function () {
                 });
             });
 
-            it("should deny user flash access to the collection", function (done) {
+            it("should deny user flash read access to the collection", function (done) {
                 ming.authenticate({
                     username: "flash",
                     password: "flash"
