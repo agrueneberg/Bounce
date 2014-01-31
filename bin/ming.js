@@ -108,16 +108,14 @@
     app.get("/:collection", auth, function (req, res, next) {
         var collectionParam;
         collectionParam = req.params.collection;
-        ming.getCollection(collectionParam, req.user, function (err, count) {
+        ming.getCollection(collectionParam, req.user, function (err, collection) {
             if (err !== null) {
                 next(err);
             } else {
-                if (count === null) {
+                if (collection === null) {
                     next();
                 } else {
-                    res.send({
-                        count: count
-                    });
+                    res.send(collection);
                 }
             }
         });
