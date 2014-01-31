@@ -94,4 +94,55 @@ describe("Ming", function () {
 
     });
 
+    describe("getCollections", function () {
+
+        beforeEach(function (done) {
+            ming.register({
+                username: "ming",
+                password: "ming"
+            }, function () {
+                ming.register({
+                    username: "flash",
+                    password: "flash"
+                }, function () {
+                    ming.authenticate({
+                        name: "ming",
+                        pass: "ming"
+                    }, function (err, user) {
+                        ming.insertDocument("planets", {
+                            name: "Mongo"
+                        }, user, done);
+                    });
+                });
+            });
+        });
+
+        it("should allow user ming access to the collection", function (done) {
+            ming.authenticate({
+                name: "ming",
+                pass: "ming"
+            }, function (err, user) {
+                ming.getCollections(user, function (err, collections) {
+                    expect(err).to.be(null);
+                    expect(collections).to.eql(["planets"]);
+                    done();
+                });
+            });
+        });
+
+        it("should deny user flash access to the collection", function (done) {
+            ming.authenticate({
+                name: "flash",
+                pass: "flash"
+            }, function (err, user) {
+                ming.getCollections(user, function (err, collections) {
+                    expect(err).to.be(null);
+                    expect(collections).to.eql([]);
+                    done();
+                });
+            });
+        });
+
+    });
+
 });
