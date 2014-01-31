@@ -224,6 +224,54 @@ describe("Ming", function () {
 
         });
 
+        describe("updateCollection", function () {
+
+            it("should throw an error if collection doesn't exist", function (done) {
+                ming.authenticate({
+                    username: "ming",
+                    password: "ming"
+                }, function (err, user) {
+                    ming.updateCollection("lizards", {}, user, function (err, updated) {
+                        expect(err).to.be(null);
+                        expect(updated).to.be(false);
+                        done();
+                    });
+                });
+            });
+
+            it("should allow user ming write access to the collection", function (done) {
+                ming.authenticate({
+                    username: "ming",
+                    password: "ming"
+                }, function (err, user) {
+                    ming.getCollection("planets", user, function (err, collection) {
+                     // Mark collection.
+                        collection.updated = true;
+                        ming.updateCollection("planets", collection, user, function (err, updated) {
+                            ming.getCollection("planets", user, function (err, updatedCollection) {
+                                expect(err).to.be(null);
+                                expect(updatedCollection.updated).to.be(true);
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
+            it("should deny user flash write access to the collection", function (done) {
+                ming.authenticate({
+                    username: "flash",
+                    password: "flash"
+                }, function (err, user) {
+                    ming.updateCollection("planets", {}, user, function (err) {
+                        expect(err).to.not.be(null);
+                        done();
+                    });
+                });
+            });
+
+        });
+
     });
 
 });
