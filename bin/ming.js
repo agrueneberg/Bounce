@@ -265,6 +265,22 @@
             }
         });
     });
+    app.put("/:collection", [auth, express.json()], function (req, res, next) {
+        var collectionParam, update;
+        collectionParam = req.params.collection;
+        update = req.body;
+        ming.updateCollection(collectionParam, update, req.user, function (err, updated) {
+            if (err !== null) {
+                next(err);
+            } else {
+                if (updated === true) {
+                    res.send(204, "No Content");
+                } else {
+                    next();
+                }
+            }
+        });
+    });
     app.put("/:collection/:document", [auth, express.json()], function (req, res, next) {
         var collectionParam, documentParam, update;
         collectionParam = req.params.collection;

@@ -43,6 +43,7 @@ API
 - `GET /:collection/:document/:field` retrieve field of document
 - `POST /:collection/query` query documents
 - `POST /:collection` create document
+- `PUT /:collection` update collection metadata
 - `PUT /:collection/:document` update document
 - `DELETE /:collection/:document` delete document
 
