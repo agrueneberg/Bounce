@@ -349,6 +349,73 @@ describe("Ming", function () {
 
             });
 
+            describe("insertDocument", function () {
+
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.insertDocument("system.users", {
+                            usr: "hacker",
+                            pwd: "hacker"
+                        }, user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should allow user ming write access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.insertDocument("planets", {
+                            name: "Earth"
+                        }, user, function (err, id) {
+                            expect(err).to.be(null);
+                            expect(id).to.not.be(null);
+                            done();
+                        });
+                    });
+                });
+
+                it("should deny user flash write access to the collection", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.insertDocument("planets", {
+                            name: "Earth"
+                        }, user, function (err) {
+                            expect(err).to.not.be(null);
+                            done();
+                        });
+                    });
+                });
+
+                it("should create a new collection if the collection does not exist yet", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.insertDocument("animals", {
+                            name: "Lizard"
+                        }, user, function (err, id) {
+                            expect(err).to.be(null);
+                            expect(id).to.not.be(null);
+                            ming.getCollection("animals", user, function (err, collection) {
+                                expect(err).to.be(null);
+                                expect(collection._count).to.be(1);
+                                done();
+                            });
+                        });
+                    });
+                });
+
+            });
+
         });
 
     });
