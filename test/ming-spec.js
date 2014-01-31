@@ -223,7 +223,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.getCollection("planets", user, function (err, collection) {
-                            expect(err).to.not.be(null);
+                            expect(err.statusCode).to.be(403);
                             done();
                         });
                     });
@@ -271,7 +271,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.updateCollection("planets", {}, user, function (err) {
-                            expect(err).to.not.be(null);
+                            expect(err.statusCode).to.be(403);
                             done();
                         });
                     });
@@ -341,7 +341,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err) {
-                            expect(err).to.not.be(null);
+                            expect(err.statusCode).to.be(403);
                             done();
                         });
                     });
@@ -389,7 +389,7 @@ describe("Ming", function () {
                         ming.insertDocument("planets", {
                             name: "Earth"
                         }, user, function (err) {
-                            expect(err).to.not.be(null);
+                            expect(err.statusCode).to.be(403);
                             done();
                         });
                     });
