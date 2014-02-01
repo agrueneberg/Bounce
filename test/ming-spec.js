@@ -250,7 +250,19 @@ describe("Ming", function () {
 
             describe("updateCollection", function () {
 
-                it("should throw an error if collection doesn't exist", function (done) {
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.updateCollection("system.users", {}, user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should return false if collection doesn't exist", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
