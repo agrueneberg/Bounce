@@ -193,7 +193,19 @@ describe("Ming", function () {
                     });
                 });
 
-                it("should throw an error if collection doesn't exist", function (done) {
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getCollection("system.users", user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should return null if collection doesn't exist", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -338,7 +350,7 @@ describe("Ming", function () {
                     });
                 });
 
-                it("should throw an error if document doesn't exist", function (done) {
+                it("should return null if document doesn't exist", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -613,6 +625,19 @@ describe("Ming", function () {
                     }, function (err, user) {
                         ming.deleteDocument("system.users", "123", user, function (err) {
                             expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should return false if document doesn't exist", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.deleteDocument("planets", "52ebdb27b31667132ad4ae6c", user, function (err, deleted) {
+                            expect(err).to.be(null);
+                            expect(deleted).to.be(false);
                             done();
                         });
                     });
