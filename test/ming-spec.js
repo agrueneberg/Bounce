@@ -38,6 +38,21 @@ describe("Ming", function () {
             });
         });
 
+        it("should not allow the same username twice", function (done) {
+            ming.register({
+                username: "ming",
+                password: "ming"
+            }, function (err, id) {
+                ming.register({
+                    username: "ming",
+                    password: "ming"
+                }, function (err) {
+                    expect(err.statusCode).to.be(409);
+                    done();
+                });
+            });
+        });
+
         it("should register a user", function (done) {
             ming.register({
                 username: "ming",
