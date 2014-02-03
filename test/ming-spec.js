@@ -107,6 +107,14 @@ describe("Ming", function () {
             });
         });
 
+        it("should fall back to a public user if no credentials are provided", function (done) {
+            ming.authenticate(null, function (err, user) {
+                expect(err).to.be(null);
+                expect(user).to.be("public");
+                done();
+            });
+        });
+
     });
 
     describe("collections & documents", function () {

@@ -34,26 +34,26 @@
         };
         credentials = authParser(req);
         if (credentials === undefined) {
-            unauthorized();
+            credentials = null;
         } else {
          // Reformat credentials.
             credentials.username = credentials.name;
             delete credentials.name;
             credentials.password = credentials.pass;
             delete credentials.pass;
-            ming.authenticate(credentials, function (err, user) {
-                if (err !== null) {
-                    next(err);
-                } else {
-                    if (user === null) {
-                        unauthorized();
-                    } else {
-                        req.user = user;
-                        next();
-                    }
-                }
-            });
         }
+        ming.authenticate(credentials, function (err, user) {
+            if (err !== null) {
+                next(err);
+            } else {
+                if (user === null) {
+                    unauthorized();
+                } else {
+                    req.user = user;
+                    next();
+                }
+            }
+        });
     };
 
     app.configure(function () {
