@@ -364,6 +364,72 @@ describe("Ming", function () {
 
             });
 
+            describe("getField", function () {
+
+                it("should throw an error if documentName is not a valid ObjectID", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getField("planets", "123", "name", user, function (err) {
+                            expect(err.statusCode).to.be(400);
+                            done();
+                        });
+                    });
+                });
+
+                it("should throw an error if collection is a system collection", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getField("system.users", "123", "name", user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+                it("should return null if document doesn't exist", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getField("planets", "52ebdb27b31667132ad4ae6c", "name", user, function (err, field) {
+                            expect(err).to.be(null);
+                            expect(field).to.be(null);
+                            done();
+                        });
+                    });
+                });
+
+                it("should allow user ming read access to the document", function (done) {
+                    ming.authenticate({
+                        username: "ming",
+                        password: "ming"
+                    }, function (err, user) {
+                        ming.getField("planets", documentId, "name", user, function (err, field) {
+                            expect(err).to.be(null);
+                            expect(field).to.be("Mongo");
+                            done();
+                        });
+                    });
+                });
+
+                it("should deny user flash read access to the document", function (done) {
+                    ming.authenticate({
+                        username: "flash",
+                        password: "flash"
+                    }, function (err, user) {
+                        ming.getField("planets", documentId, "name", user, function (err) {
+                            expect(err.statusCode).to.be(403);
+                            done();
+                        });
+                    });
+                });
+
+            });
+
             describe("insertDocument", function () {
 
                 it("should throw an error if collection is a system collection", function (done) {
