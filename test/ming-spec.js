@@ -181,26 +181,6 @@ describe("Ming", function () {
 
             describe("getCollection", function () {
 
-                beforeEach(function (done) {
-                    ming.register({
-                        username: "aura",
-                        password: "aura"
-                    }, function (err, id) {
-                        ming.authenticate({
-                            username: "ming",
-                            password: "ming"
-                        }, function (err, user) {
-                            ming.getCollection("planets", user, function (err, collection) {
-                             // Strip _count.
-                                delete collection._count;
-                             // Add aura to readers.
-                                collection._permissions.read.push(id);
-                                ming.updateCollection("planets", collection, user, done);
-                            });
-                        });
-                    });
-                });
-
                 it("should throw an error if collection is a system collection", function (done) {
                     ming.authenticate({
                         username: "ming",
@@ -226,7 +206,7 @@ describe("Ming", function () {
                     });
                 });
 
-                it("should allow user ming read access to the collection and the document", function (done) {
+                it("should allow user ming read access to the collection", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -234,21 +214,7 @@ describe("Ming", function () {
                         ming.getCollection("planets", user, function (err, collection) {
                             expect(err).to.be(null);
                             expect(collection).to.not.be(null);
-                            expect(collection._count).to.be(1);
-                            done();
-                        });
-                    });
-                });
-
-                it("should allow user aura read access to the collection but not the document", function (done) {
-                    ming.authenticate({
-                        username: "aura",
-                        password: "aura"
-                    }, function (err, user) {
-                        ming.getCollection("planets", user, function (err, collection) {
-                            expect(err).to.be(null);
-                            expect(collection).to.not.be(null);
-                            expect(collection._count).to.be(0);
+                            expect(collection.name).to.be("planets");
                             done();
                         });
                     });
@@ -456,7 +422,7 @@ describe("Ming", function () {
                             expect(id).to.not.be(null);
                             ming.getCollection("animals", user, function (err, collection) {
                                 expect(err).to.be(null);
-                                expect(collection._count).to.be(1);
+                                expect(collection.name).to.be("animals");
                                 done();
                             });
                         });
