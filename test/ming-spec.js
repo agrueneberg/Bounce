@@ -524,7 +524,6 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                            document._permissions.read.push(userFlashId);
                             document._permissions.write.push(userFlashId);
                             ming.updateDocument("planets", documentId, document, user, function (err) {
                                 ming.authenticate({
@@ -535,9 +534,8 @@ describe("Ming", function () {
                                     ming.updateDocument("planets", documentId, document, user, function (err, updated) {
                                         expect(err).to.be(null);
                                         expect(updated).to.be(true);
-                                        ming.getDocument("planets", documentId, user, function (err, document) {
-                                            expect(err).to.be(null);
-                                            expect(document.name).to.be("Mongo, Earth II");
+                                        ming.getDocument("planets", documentId, user, function (err) {
+                                            expect(err.statusCode).to.be(403);
                                             done();
                                         });
                                     });
