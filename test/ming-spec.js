@@ -497,7 +497,8 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                            document._permissions.read.push(userFlashId);
+                         // Change permissions from inherit to explicit listing.
+                            document._permissions.read = [userMingId, userFlashId];
                             ming.updateDocument("planets", documentId, document, user, function (err) {
                                 ming.authenticate({
                                     username: "flash",
@@ -524,7 +525,8 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                            document._permissions.write.push(userFlashId);
+                         // Change permissions from inherit to explicit listing.
+                            document._permissions.write = [userMingId, userFlashId];
                             ming.updateDocument("planets", documentId, document, user, function (err) {
                                 ming.authenticate({
                                     username: "flash",
@@ -551,8 +553,9 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                            document._permissions.read.push(userFlashId);
-                            document._permissions.write.push(userFlashId);
+                         // Change permissions from inherit to explicit listing.
+                            document._permissions.read = [userMingId, userFlashId];
+                            document._permissions.write = [userMingId, userFlashId];
                             ming.updateDocument("planets", documentId, document, user, function (err) {
                                 ming.authenticate({
                                     username: "flash",
