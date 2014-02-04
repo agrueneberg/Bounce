@@ -99,9 +99,7 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send({
-                    collections: collections
-                });
+                res.send(collections);
             }
         });
     });
