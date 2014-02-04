@@ -103,6 +103,15 @@
             }
         });
     });
+    app.get("/ming.users", function (req, res, next) {
+        ming.getUsers(function (err, users) {
+            if (err !== null) {
+                next(err);
+            } else {
+                res.send(users);
+            }
+        });
+    });
     app.get("/:collection", auth, function (req, res, next) {
         var collectionParam;
         collectionParam = req.params.collection;
@@ -148,6 +157,21 @@
                 }
             });
         }
+    });
+    app.get("/ming.users/:user", function (req, res, next) {
+        var userParam;
+        userParam = req.params.user;
+        ming.getUser(userParam, function (err, user) {
+            if (err !== null) {
+                next(err);
+            } else {
+                if (user === null) {
+                    res.send(404, "Not Found");
+                } else {
+                    res.send(user);
+                }
+            }
+        });
     });
     app.get("/:collection/:document", auth, function (req, res, next) {
         var collectionParam, documentParam;
