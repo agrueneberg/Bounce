@@ -206,6 +206,16 @@
             }
         });
     });
+    app.post("/", [auth, express.json()], function (req, res, next) {
+        ming.insertCollection(req.body, req.user, function (err, id) {
+            if (err !== null) {
+                next(err);
+            } else {
+                res.location(req.body.name + "/" + id);
+                res.send(201, "Created");
+            }
+        });
+    });
     app.post("/:collection/query", [auth, express.json()], function (req, res, next) {
         var collectionParam, query, options;
         collectionParam = req.params.collection;
