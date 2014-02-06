@@ -5,7 +5,7 @@
 
     var argv, express, corser, authParser, bodyParser, dataSource, ming, app, auth;
 
-    argv = require("optimist")
+    argv = require("yargs")
              .options("port", {
                  default: 27080,
                  describe: "Port"
