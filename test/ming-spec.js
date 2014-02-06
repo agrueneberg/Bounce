@@ -199,9 +199,8 @@ describe("Ming", function () {
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
-                        ming.getCollection("lizards", user, function (err, collection) {
-                            expect(err).to.be(null);
-                            expect(collection).to.be(null);
+                        ming.getCollection("lizards", user, function (err) {
+                            expect(err).to.be.a(errors.NotFound);
                             done();
                         });
                     });
@@ -249,14 +248,13 @@ describe("Ming", function () {
                     });
                 });
 
-                it("should return false if collection doesn't exist", function (done) {
+                it("should throw an error if collection doesn't exist", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
-                        ming.updateCollection("lizards", {}, user, function (err, updated) {
-                            expect(err).to.be(null);
-                            expect(updated).to.be(false);
+                        ming.updateCollection("lizards", {}, user, function (err) {
+                            expect(err).to.be.a(errors.NotFound);
                             done();
                         });
                     });
@@ -270,7 +268,7 @@ describe("Ming", function () {
                         ming.getCollection("planets", user, function (err, collection) {
                          // Mark collection.
                             collection.updated = true;
-                            ming.updateCollection("planets", collection, user, function (err, updated) {
+                            ming.updateCollection("planets", collection, user, function (err) {
                                 ming.getCollection("planets", user, function (err, updatedCollection) {
                                     expect(err).to.be(null);
                                     expect(updatedCollection.updated).to.be(true);
@@ -330,9 +328,8 @@ describe("Ming", function () {
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
-                        ming.getDocument("planets", "52ebdb27b31667132ad4ae6c", user, function (err, document) {
-                            expect(err).to.be(null);
-                            expect(document).to.be(null);
+                        ming.getDocument("planets", "52ebdb27b31667132ad4ae6c", user, function (err) {
+                            expect(err).to.be.a(errors.NotFound);
                             done();
                         });
                     });
@@ -396,9 +393,8 @@ describe("Ming", function () {
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
-                        ming.getField("planets", "52ebdb27b31667132ad4ae6c", "name", user, function (err, field) {
-                            expect(err).to.be(null);
-                            expect(field).to.be(null);
+                        ming.getField("planets", "52ebdb27b31667132ad4ae6c", "name", user, function (err) {
+                            expect(err).to.be.a(errors.NotFound);
                             done();
                         });
                     });
@@ -531,9 +527,8 @@ describe("Ming", function () {
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
                             document.name = "Mongo the Great";
-                            ming.updateDocument("planets", documentId, document, user, function (err, updated) {
+                            ming.updateDocument("planets", documentId, document, user, function (err) {
                                 expect(err).to.be(null);
-                                expect(updated).to.be(true);
                                 ming.getDocument("planets", documentId, user, function (err, document) {
                                     expect(err).to.be(null);
                                     expect(document.name).to.be("Mongo the Great");
@@ -600,9 +595,8 @@ describe("Ming", function () {
                                     password: "flash"
                                 }, function (err, user) {
                                     document.name = "Mongo, Earth II";
-                                    ming.updateDocument("planets", documentId, document, user, function (err, updated) {
+                                    ming.updateDocument("planets", documentId, document, user, function (err) {
                                         expect(err).to.be(null);
-                                        expect(updated).to.be(true);
                                         ming.getDocument("planets", documentId, user, function (err) {
                                             expect(err).to.be.a(errors.Forbidden);
                                             done();
@@ -629,9 +623,8 @@ describe("Ming", function () {
                                     password: "flash"
                                 }, function (err, user) {
                                     document.name = "Mongo, Earth II";
-                                    ming.updateDocument("planets", documentId, document, user, function (err, updated) {
+                                    ming.updateDocument("planets", documentId, document, user, function (err) {
                                         expect(err).to.be(null);
-                                        expect(updated).to.be(true);
                                         ming.getDocument("planets", documentId, user, function (err, document) {
                                             expect(err).to.be(null);
                                             expect(document.name).to.be("Mongo, Earth II");
@@ -672,14 +665,13 @@ describe("Ming", function () {
                     });
                 });
 
-                it("should return false if document doesn't exist", function (done) {
+                it("should throw an error if document doesn't exist", function (done) {
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
-                        ming.deleteDocument("planets", "52ebdb27b31667132ad4ae6c", user, function (err, deleted) {
-                            expect(err).to.be(null);
-                            expect(deleted).to.be(false);
+                        ming.deleteDocument("planets", "52ebdb27b31667132ad4ae6c", user, function (err) {
+                            expect(err).to.be.a(errors.NotFound);
                             done();
                         });
                     });
@@ -690,12 +682,10 @@ describe("Ming", function () {
                         username: "ming",
                         password: "ming"
                     }, function (err, user) {
-                        ming.deleteDocument("planets", documentId, user, function (err, deleted) {
+                        ming.deleteDocument("planets", documentId, user, function (err) {
                             expect(err).to.be(null);
-                            expect(deleted).to.be(true);
-                            ming.getDocument("planets", documentId, user, function (err, document) {
-                                expect(err).to.be(null);
-                                expect(document).to.be(null);
+                            ming.getDocument("planets", documentId, user, function (err) {
+                                expect(err).to.be.a(errors.NotFound);
                                 done();
                             });
                         });

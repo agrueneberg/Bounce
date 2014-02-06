@@ -79,8 +79,8 @@
         app.use(app.router);
 
      // Handle missing pages.
-        app.use(function (req, res) {
-            res.send(404, "Not Found");
+        app.use(function (req, res, next) {
+            next(new errors.NotFound());
         });
 
      // Handle errors (signature must not be changed).
@@ -120,11 +120,7 @@
             if (err !== null) {
                 next(err);
             } else {
-                if (collection === null) {
-                    next();
-                } else {
-                    res.send(collection);
-                }
+                res.send(collection);
             }
         });
     });
@@ -137,12 +133,8 @@
                 if (err !== null) {
                     next(err);
                 } else {
-                    if (file === null) {
-                        next();
-                    } else {
-                        res.type(file.contentType);
-                        res.send(file.file);
-                    }
+                    res.type(file.contentType);
+                    res.send(file.file);
                 }
             });
         } else {
@@ -156,11 +148,7 @@
             if (err !== null) {
                 next(err);
             } else {
-                if (user === null) {
-                    res.send(404, "Not Found");
-                } else {
-                    res.send(user);
-                }
+                res.send(user);
             }
         });
     });
@@ -172,11 +160,7 @@
             if (err !== null) {
                 next(err);
             } else {
-                if (document === null) {
-                    next();
-                } else {
-                    res.send(document);
-                }
+                res.send(document);
             }
         });
     });
@@ -189,11 +173,7 @@
             if (err !== null) {
                 next(err);
             } else {
-                if (field === null) {
-                    next();
-                } else {
-                    res.send(field);
-                }
+                res.send(field);
             }
         });
     });
@@ -225,11 +205,7 @@
             if (err !== null) {
                 next(err);
             } else {
-                if (documents === null) {
-                    next();
-                } else {
-                    res.send(documents);
-                }
+                res.send(documents);
             }
         });
     });
@@ -290,15 +266,11 @@
         var collectionParam, update;
         collectionParam = req.params.collection;
         update = req.body;
-        ming.updateCollection(collectionParam, update, req.user, function (err, updated) {
+        ming.updateCollection(collectionParam, update, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
-                if (updated === true) {
-                    res.send(204, "No Content");
-                } else {
-                    next();
-                }
+                res.send(204, "No Content");
             }
         });
     });
@@ -307,15 +279,11 @@
         collectionParam = req.params.collection;
         documentParam = req.params.document;
         update = req.body;
-        ming.updateDocument(collectionParam, documentParam, update, req.user, function (err, updated) {
+        ming.updateDocument(collectionParam, documentParam, update, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
-                if (updated === true) {
-                    res.send(204, "No Content");
-                } else {
-                    next();
-                }
+                res.send(204, "No Content");
             }
         });
     });
@@ -323,15 +291,11 @@
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
-        ming.deleteFile(prefixParam, fileParam, req.user, function (err, deleted) {
+        ming.deleteFile(prefixParam, fileParam, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
-                if (deleted === true) {
-                    res.send(200, "OK");
-                } else {
-                    next();
-                }
+                res.send(200, "OK");
             }
         });
     });
@@ -339,15 +303,11 @@
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
-        ming.deleteDocument(collectionParam, documentParam, req.user, function (err, deleted) {
+        ming.deleteDocument(collectionParam, documentParam, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
-                if (deleted === true) {
-                    res.send(200, "OK");
-                } else {
-                    next();
-                }
+                res.send(200, "OK");
             }
         });
     });
