@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, authParser, bodyParser, dataSource, ming, app, auth;
+    var argv, express, corser, authParser, bodyParser, errors, dataSource, ming, app, auth;
 
     argv = require("yargs")
              .options("port", {
@@ -19,6 +19,7 @@
     corser = require("corser");
     authParser = require("basic-auth");
     bodyParser = require("raw-body");
+    errors = require("../lib/errors");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
     ming = require("../lib/ming")({
         dataSource: dataSource
@@ -85,7 +86,7 @@
      // Handle errors (signature must not be changed).
         app.use(function (err, req, res, next) {
             if (err.hasOwnProperty("statusCode") === true) {
-                res.send(err.statusCode, err.name + ": " + err.message);
+                res.send(err.statusCode, err.message);
             } else {
                 console.error(err);
                 res.send(500, "Internal Server Error");
@@ -248,7 +249,7 @@
         file = req.body;
      // Skip empty files.
         if (file.length === 0) {
-            res.send(400, "Bad Request: Empty body");
+            next(new errors.BadRequest("Empty body."));
         } else {
             ming.insertFile(prefixParam, contentType, file, req.user, function (err, id) {
                 if (err !== null) {

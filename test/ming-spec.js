@@ -1,5 +1,6 @@
-var expect;
+var errors, expect;
 
+errors = require("../lib/errors");
 expect = require("expect.js");
 
 describe("Ming", function () {
@@ -47,7 +48,7 @@ describe("Ming", function () {
                     username: "ming",
                     password: "ming"
                 }, function (err) {
-                    expect(err.statusCode).to.be(409);
+                    expect(err).to.be.a(errors.Conflict);
                     done();
                 });
             });
@@ -187,7 +188,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getCollection("system.users", user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -226,7 +227,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.getCollection("planets", user, function (err, collection) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -242,7 +243,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.updateCollection("system.users", {}, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -286,7 +287,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.updateCollection("planets", {}, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -306,7 +307,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", "123", user, function (err) {
-                            expect(err.statusCode).to.be(400);
+                            expect(err).to.be.a(errors.BadRequest);
                             done();
                         });
                     });
@@ -318,7 +319,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("system.users", "123", user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -356,7 +357,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -372,7 +373,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getField("planets", "123", "name", user, function (err) {
-                            expect(err.statusCode).to.be(400);
+                            expect(err).to.be.a(errors.BadRequest);
                             done();
                         });
                     });
@@ -384,7 +385,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getField("system.users", "123", "name", user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -422,7 +423,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.getField("planets", documentId, "name", user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -441,7 +442,7 @@ describe("Ming", function () {
                             usr: "hacker",
                             pwd: "hacker"
                         }, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -470,7 +471,7 @@ describe("Ming", function () {
                         ming.insertDocument("planets", {
                             name: "Earth"
                         }, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -505,7 +506,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.updateDocument("planets", "123", {}, user, function (err) {
-                            expect(err.statusCode).to.be(400);
+                            expect(err).to.be.a(errors.BadRequest);
                             done();
                         });
                     });
@@ -517,7 +518,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.updateDocument("system.users", "123", {}, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -551,7 +552,7 @@ describe("Ming", function () {
                         ming.updateDocument("planets", documentId, {
                             name: "Mongo, Earth II"
                         }, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -575,7 +576,7 @@ describe("Ming", function () {
                                         expect(document.name).to.be("Mongo");
                                         document.name = "Mongo, Earth II";
                                         ming.updateDocument("planets", documentId, document, user, function (err) {
-                                            expect(err.statusCode).to.be(403);
+                                            expect(err).to.be.a(errors.Forbidden);
                                             done();
                                         });
                                     });
@@ -603,7 +604,7 @@ describe("Ming", function () {
                                         expect(err).to.be(null);
                                         expect(updated).to.be(true);
                                         ming.getDocument("planets", documentId, user, function (err) {
-                                            expect(err.statusCode).to.be(403);
+                                            expect(err).to.be.a(errors.Forbidden);
                                             done();
                                         });
                                     });
@@ -653,7 +654,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.deleteDocument("planets", "123", user, function (err) {
-                            expect(err.statusCode).to.be(400);
+                            expect(err).to.be.a(errors.BadRequest);
                             done();
                         });
                     });
@@ -665,7 +666,7 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.deleteDocument("system.users", "123", user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
@@ -707,7 +708,7 @@ describe("Ming", function () {
                         password: "flash"
                     }, function (err, user) {
                         ming.deleteDocument("planets", documentId, user, function (err) {
-                            expect(err.statusCode).to.be(403);
+                            expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
                     });
