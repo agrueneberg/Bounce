@@ -145,17 +145,7 @@
                 }
             });
         } else {
-            ming.getDocument(prefixParam + ".files", fileParam, req.user, function (err, document) {
-                if (err !== null) {
-                    next(err);
-                } else {
-                    if (document === null) {
-                        next();
-                    } else {
-                        res.send(document);
-                    }
-                }
-            });
+            next();
         }
     });
     app.get("/ming.users/:user", function (req, res, next) {
