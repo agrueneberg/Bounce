@@ -47,6 +47,17 @@
 			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
 		},
 		{
+			"id": "e5d4ab7f-beaa-143d-18d6-39fbc5e7878f",
+			"name": "Permissions",
+			"description": "",
+			"order": [
+				"2e9e7250-8907-70dc-fb20-907478715357",
+				"b272e63d-527c-8181-6435-6b82d00f6e81"
+			],
+			"collection_name": "Ming",
+			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
+		},
+		{
 			"id": "65c67ebc-1774-0e9b-330e-9dc92e6ccef0",
 			"name": "Users",
 			"description": "",
@@ -62,6 +73,24 @@
 	"timestamp": 1390889610192,
 	"synced": false,
 	"requests": [
+		{
+			"id": "2e9e7250-8907-70dc-fb20-907478715357",
+			"headers": "Authorization: {{authorization}}\n",
+			"url": "{{deployment}}/.well-known/governance?resource=_resource_",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"name": "Get permissions",
+			"description": "`_resource_` is the URL of a resource.",
+			"descriptionFormat": "html",
+			"time": 1391753269279,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"collectionId": "f0096e6d-f7b9-a2e8-4839-796b4d263c31",
+			"synced": false
+		},
 		{
 			"id": "36685f3f-6538-51b4-ab96-a5df56aed8d3",
 			"headers": "Authorization: {{authorization}}\nContent-Type: application/json\n",
@@ -244,6 +273,23 @@
 			"time": 1390939611391,
 			"name": "Get document",
 			"description": "`_collection_` is a collection name.\n\n`_document_` is a MongoDB ObjectID.",
+			"collectionId": "f0096e6d-f7b9-a2e8-4839-796b4d263c31",
+			"responses": [],
+			"synced": false
+		},
+		{
+			"id": "b272e63d-527c-8181-6435-6b82d00f6e81",
+			"headers": "Authorization: {{authorization}}\nContent-Type: application/json\n",
+			"url": "{{deployment}}/.well-known/governance?resource=/",
+			"pathVariables": {},
+			"method": "PUT",
+			"data": "{\n}",
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"time": 1391808098149,
+			"name": "Update permissions",
+			"description": "`_resource_` is the URL of a resource.",
 			"collectionId": "f0096e6d-f7b9-a2e8-4839-796b4d263c31",
 			"responses": [],
 			"synced": false
