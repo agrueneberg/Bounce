@@ -102,9 +102,27 @@
             } else {
              // Only expose name of collection.
                 collections = collections.map(function (collection) {
-                    return collection.name;
+                    return {
+                        name: collection.name
+                    };
                 });
-                res.send(collections);
+                res.send({
+                    _links: {
+                        self: {
+                            href: req.path
+                        }
+                    },
+                    _embedded: {
+                        collections: collections.map(function (collection) {
+                            collection["_links"] = {
+                                self: {
+                                    href: "/" + collection.name
+                                }
+                            };
+                            return collection;
+                        })
+                    }
+                });
             }
         });
     });
@@ -113,7 +131,25 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send(users);
+                res.send({
+                    _links: {
+                        self: {
+                            href: req.path
+                        }
+                    },
+                    _embedded: {
+                        users: users.map(function (user) {
+                            user["_links"] = {
+                                self: {
+                                    href: "/ming.users/" + user._id
+                                }
+                            };
+                         // Do not expose _id of user.
+                            delete user._id;
+                            return user;
+                        })
+                    }
+                });
             }
         });
     });
@@ -124,6 +160,11 @@
             if (err !== null) {
                 next(err);
             } else {
+                collection["_links"] = {
+                    self: {
+                        href: req.path
+                    }
+                };
              // Do not expose _id of collection.
                 delete collection._id;
                 res.send(collection);
@@ -154,6 +195,13 @@
             if (err !== null) {
                 next(err);
             } else {
+                user["_links"] = {
+                    self: {
+                        href: req.path
+                    }
+                };
+             // Do not expose _id of user.
+                delete user._id;
                 res.send(user);
             }
         });
@@ -175,6 +223,13 @@
                         contentType: document.contentType
                     };
                 }
+                document["_links"] = {
+                    self: {
+                        href: req.path
+                    }
+                };
+             // Do not expose _id of document.
+                delete document._id;
                 res.send(document);
             }
         });
@@ -185,10 +240,18 @@
         documentParam = req.params.document;
         fieldParam = req.params.field;
         ming.getField(collectionParam, documentParam, fieldParam, req.user, function (err, field) {
+            var document;
             if (err !== null) {
                 next(err);
             } else {
-                res.send(field);
+                document = {};
+                document[fieldParam] = field;
+                document["_links"] = {
+                    self: {
+                        href: req.path
+                    }
+                };
+                res.send(document);
             }
         });
     });
@@ -231,7 +294,25 @@
                         };
                     });
                 }
-                res.send(documents);
+                res.send({
+                    _links: {
+                        self: {
+                            href: req.path
+                        }
+                    },
+                    _embedded: {
+                        results: documents.map(function (document) {
+                            document["_links"] = {
+                                self: {
+                                    href: "/" + collectionParam + "/" + document._id
+                                }
+                            };
+                         // Do not expose _id of document.
+                            delete document._id;
+                            return document;
+                        })
+                    }
+                });
             }
         });
     });
