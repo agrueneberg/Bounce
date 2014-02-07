@@ -159,7 +159,8 @@ describe("Ming", function () {
                     }, function (err, user) {
                         ming.getCollections(user, function (err, collections) {
                             expect(err).to.be(null);
-                            expect(collections).to.eql(["planets"]);
+                            expect(collections.length).to.eql(1);
+                            expect(collections[0].name).to.eql("planets");
                             done();
                         });
                     });

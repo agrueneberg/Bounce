@@ -124,6 +124,8 @@
             if (err !== null) {
                 next(err);
             } else {
+             // Do not expose _id of collection.
+                delete collection._id;
                 res.send(collection);
             }
         });
