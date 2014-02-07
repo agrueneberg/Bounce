@@ -166,6 +166,15 @@
             if (err !== null) {
                 next(err);
             } else {
+             // Filter file properties.
+                if (collectionParam.lastIndexOf(".files") !== -1 && collectionParam.lastIndexOf(".files") === collectionParam.length - 6) {
+                    document = {
+                        _id: document._id,
+                        _permissions: document.metadata._permissions,
+                        size: document.length,
+                        contentType: document.contentType
+                    };
+                }
                 res.send(document);
             }
         });
@@ -211,6 +220,17 @@
             if (err !== null) {
                 next(err);
             } else {
+             // Filter file properties.
+                if (collectionParam.lastIndexOf(".files") !== -1 && collectionParam.lastIndexOf(".files") === collectionParam.length - 6) {
+                    documents = documents.map(function (document) {
+                        return {
+                            _id: document._id,
+                            _permissions: document.metadata._permissions,
+                            size: document.length,
+                            contentType: document.contentType
+                        };
+                    });
+                }
                 res.send(documents);
             }
         });
