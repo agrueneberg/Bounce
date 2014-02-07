@@ -391,6 +391,19 @@
             }
         });
     });
+    app.put("/.well-known/governance", [auth, express.json()], function (req, res, next) {
+        if (req.query.hasOwnProperty("resource") === false) {
+            next(new errors.BadRequest("Missing \"resource\" URL parameter."));
+        } else {
+            ming.updatePermissions(req.query.resource, req.body, req.user, function (err) {
+                if (err !== null) {
+                    next(err);
+                } else {
+                    res.send(204, "No Content");
+                }
+            });
+        }
+    });
     app.put("/:collection/:document", [auth, express.json()], function (req, res, next) {
         var collectionParam, documentParam, update;
         collectionParam = req.params.collection;
