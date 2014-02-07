@@ -104,6 +104,9 @@
                     _links: {
                         self: {
                             href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=" + req.path
                         }
                     },
                     _embedded: {
@@ -111,6 +114,9 @@
                             collection["_links"] = {
                                 self: {
                                     href: "/" + collection.name
+                                },
+                                governance: {
+                                    href: "/.well-known/governance?resource=/" + collection.name
                                 }
                             };
                          // Do not expose _id of collection.
@@ -131,6 +137,9 @@
                     _links: {
                         self: {
                             href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=" + req.path
                         }
                     },
                     _embedded: {
@@ -138,6 +147,9 @@
                             user["_links"] = {
                                 self: {
                                     href: "/ming.users/" + user._id
+                                },
+                                governance: {
+                                    href: "/.well-known/governance?resource=/ming.users/" + user._id
                                 }
                             };
                          // Do not expose _id of user.
@@ -159,6 +171,9 @@
                 collection["_links"] = {
                     self: {
                         href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
                     }
                 };
              // Do not expose _id of collection.
@@ -210,6 +225,9 @@
                 user["_links"] = {
                     self: {
                         href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
                     }
                 };
              // Do not expose _id of user.
@@ -237,6 +255,9 @@
                 document["_links"] = {
                     self: {
                         href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
                     }
                 };
              // Do not expose _id of document.
@@ -260,6 +281,9 @@
                 document["_links"] = {
                     self: {
                         href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
                     }
                 };
                 res.send(document);
@@ -308,6 +332,9 @@
                     _links: {
                         self: {
                             href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=/" + collectionParam
                         }
                     },
                     _embedded: {
@@ -315,6 +342,9 @@
                             document["_links"] = {
                                 self: {
                                     href: "/" + collectionParam + "/" + document._id
+                                },
+                                governance: {
+                                    href: "/.well-known/governance?resource=/" + collectionParam + "/" + document._id
                                 }
                             };
                          // Do not expose _id of document.
