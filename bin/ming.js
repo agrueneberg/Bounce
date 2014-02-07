@@ -100,6 +100,10 @@
             if (err !== null) {
                 next(err);
             } else {
+             // Only expose name of collection.
+                collections = collections.map(function (collection) {
+                    return collection.name;
+                });
                 res.send(collections);
             }
         });
