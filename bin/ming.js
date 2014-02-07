@@ -100,12 +100,6 @@
             if (err !== null) {
                 next(err);
             } else {
-             // Only expose name of collection.
-                collections = collections.map(function (collection) {
-                    return {
-                        name: collection.name
-                    };
-                });
                 res.send({
                     _links: {
                         self: {
@@ -119,6 +113,8 @@
                                     href: "/" + collection.name
                                 }
                             };
+                         // Do not expose _id of collection.
+                            delete collection._id;
                             return collection;
                         })
                     }
@@ -234,7 +230,6 @@
                 if (collectionParam.lastIndexOf(".files") !== -1 && collectionParam.lastIndexOf(".files") === collectionParam.length - 6) {
                     document = {
                         _id: document._id,
-                        _permissions: document.metadata._permissions,
                         size: document.length,
                         contentType: document.contentType
                     };
@@ -304,7 +299,6 @@
                     documents = documents.map(function (document) {
                         return {
                             _id: document._id,
-                            _permissions: document.metadata._permissions,
                             size: document.length,
                             contentType: document.contentType
                         };
