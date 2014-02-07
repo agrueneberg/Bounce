@@ -171,6 +171,22 @@
             }
         });
     });
+    app.get("/.well-known/governance", auth, function (req, res, next) {
+        if (req.query.hasOwnProperty("resource") === false) {
+            next(new errors.BadRequest("Missing \"resource\" URL parameter."));
+        } else {
+            ming.getPermissions(req.query.resource, req.user, function (err, permissions) {
+                if (err !== null) {
+                    next(err);
+                } else {
+                 // Do not expose _id and resource of collection.
+                    delete permissions._id;
+                    delete permissions.resource;
+                    res.send(permissions);
+                }
+            });
+        }
+    });
     app.get("/:prefix.files/:file", auth, function (req, res, next) {
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
