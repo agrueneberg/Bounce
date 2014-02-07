@@ -100,11 +100,31 @@
             if (err !== null) {
                 next(err);
             } else {
-             // Only expose name of collection.
-                collections = collections.map(function (collection) {
-                    return collection.name;
+                res.send({
+                    _links: {
+                        self: {
+                            href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=" + req.path
+                        }
+                    },
+                    _embedded: {
+                        collections: collections.map(function (collection) {
+                            collection["_links"] = {
+                                self: {
+                                    href: "/" + collection.name
+                                },
+                                governance: {
+                                    href: "/.well-known/governance?resource=/" + collection.name
+                                }
+                            };
+                         // Do not expose _id of collection.
+                            delete collection._id;
+                            return collection;
+                        })
+                    }
                 });
-                res.send(collections);
             }
         });
     });
@@ -113,7 +133,31 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send(users);
+                res.send({
+                    _links: {
+                        self: {
+                            href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=" + req.path
+                        }
+                    },
+                    _embedded: {
+                        users: users.map(function (user) {
+                            user["_links"] = {
+                                self: {
+                                    href: "/ming.users/" + user._id
+                                },
+                                governance: {
+                                    href: "/.well-known/governance?resource=/ming.users/" + user._id
+                                }
+                            };
+                         // Do not expose _id of user.
+                            delete user._id;
+                            return user;
+                        })
+                    }
+                });
             }
         });
     });
@@ -124,11 +168,35 @@
             if (err !== null) {
                 next(err);
             } else {
+                collection["_links"] = {
+                    self: {
+                        href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
+                    }
+                };
              // Do not expose _id of collection.
                 delete collection._id;
                 res.send(collection);
             }
         });
+    });
+    app.get("/.well-known/governance", auth, function (req, res, next) {
+        if (req.query.hasOwnProperty("resource") === false) {
+            next(new errors.BadRequest("Missing \"resource\" URL parameter."));
+        } else {
+            ming.getPermissions(req.query.resource, req.user, function (err, permissions) {
+                if (err !== null) {
+                    next(err);
+                } else {
+                 // Do not expose _id and resource of collection.
+                    delete permissions._id;
+                    delete permissions.resource;
+                    res.send(permissions);
+                }
+            });
+        }
     });
     app.get("/:prefix.files/:file", auth, function (req, res, next) {
         var prefixParam, fileParam;
@@ -154,6 +222,16 @@
             if (err !== null) {
                 next(err);
             } else {
+                user["_links"] = {
+                    self: {
+                        href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
+                    }
+                };
+             // Do not expose _id of user.
+                delete user._id;
                 res.send(user);
             }
         });
@@ -170,11 +248,20 @@
                 if (collectionParam.lastIndexOf(".files") !== -1 && collectionParam.lastIndexOf(".files") === collectionParam.length - 6) {
                     document = {
                         _id: document._id,
-                        _permissions: document.metadata._permissions,
                         size: document.length,
                         contentType: document.contentType
                     };
                 }
+                document["_links"] = {
+                    self: {
+                        href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
+                    }
+                };
+             // Do not expose _id of document.
+                delete document._id;
                 res.send(document);
             }
         });
@@ -185,10 +272,21 @@
         documentParam = req.params.document;
         fieldParam = req.params.field;
         ming.getField(collectionParam, documentParam, fieldParam, req.user, function (err, field) {
+            var document;
             if (err !== null) {
                 next(err);
             } else {
-                res.send(field);
+                document = {};
+                document[fieldParam] = field;
+                document["_links"] = {
+                    self: {
+                        href: req.path
+                    },
+                    governance: {
+                        href: "/.well-known/governance?resource=" + req.path
+                    }
+                };
+                res.send(document);
             }
         });
     });
@@ -225,13 +323,36 @@
                     documents = documents.map(function (document) {
                         return {
                             _id: document._id,
-                            _permissions: document.metadata._permissions,
                             size: document.length,
                             contentType: document.contentType
                         };
                     });
                 }
-                res.send(documents);
+                res.send({
+                    _links: {
+                        self: {
+                            href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=/" + collectionParam
+                        }
+                    },
+                    _embedded: {
+                        results: documents.map(function (document) {
+                            document["_links"] = {
+                                self: {
+                                    href: "/" + collectionParam + "/" + document._id
+                                },
+                                governance: {
+                                    href: "/.well-known/governance?resource=/" + collectionParam + "/" + document._id
+                                }
+                            };
+                         // Do not expose _id of document.
+                            delete document._id;
+                            return document;
+                        })
+                    }
+                });
             }
         });
     });
@@ -299,6 +420,19 @@
                 res.send(204, "No Content");
             }
         });
+    });
+    app.put("/.well-known/governance", [auth, express.json()], function (req, res, next) {
+        if (req.query.hasOwnProperty("resource") === false) {
+            next(new errors.BadRequest("Missing \"resource\" URL parameter."));
+        } else {
+            ming.updatePermissions(req.query.resource, req.body, req.user, function (err) {
+                if (err !== null) {
+                    next(err);
+                } else {
+                    res.send(204, "No Content");
+                }
+            });
+        }
     });
     app.put("/:collection/:document", [auth, express.json()], function (req, res, next) {
         var collectionParam, documentParam, update;
