@@ -63,7 +63,7 @@
         app.use(corser.create({
             methods: corser.simpleMethods.concat(["DELETE", "PUT"]),
             requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
-            responseHeaders: corser.simpleResponseHeaders.concat(["Location"])
+            responseHeaders: corser.simpleResponseHeaders.concat(["Link", "Location"])
         }));
 
      // Terminate CORS preflights.
@@ -208,6 +208,10 @@
                     next(err);
                 } else {
                     res.type(file.contentType);
+                    res.header("Link", [
+                        "<" + req.path + ">; rel=\"self\"",
+                        "</.well-known/governance?resource=" + req.path + ">; rel=\"governance\""
+                    ]);
                     res.send(file.file);
                 }
             });
