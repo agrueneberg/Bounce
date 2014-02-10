@@ -123,7 +123,7 @@ describe("Ming", function () {
             it("should fall back to a public user if no credentials are provided", function (done) {
                 ming.authenticate(null, function (err, user) {
                     expect(err).to.be(null);
-                    expect(user).to.be("public");
+                    expect(user.username).to.be("public");
                     done();
                 });
             });
@@ -864,7 +864,10 @@ describe("Ming", function () {
                     password: "ming"
                 }, function (err, user) {
                     ming.updatePermissions("/planets/" + documentId, {
-                        read: ["ming", "flash"]
+                        read: {
+                            ming: "all",
+                            flash: "all"
+                        }
                     }, user, function (err) {
                         ming.authenticate({
                             username: "flash",
@@ -891,7 +894,10 @@ describe("Ming", function () {
                 }, function (err, user) {
                     ming.getDocument("planets", documentId, user, function (err, document) {
                         ming.updatePermissions("/planets/" + documentId, {
-                            write: ["ming", "flash"]
+                            write: {
+                                ming: "all",
+                                flash: "all"
+                            }
                         }, user, function (err) {
                             ming.authenticate({
                                 username: "flash",
@@ -918,8 +924,14 @@ describe("Ming", function () {
                 }, function (err, user) {
                     ming.getDocument("planets", documentId, user, function (err, document) {
                         ming.updatePermissions("/planets/" + documentId, {
-                            read: ["ming", "flash"],
-                            write: ["ming", "flash"]
+                            read: {
+                                ming: "all",
+                                flash: "all"
+                            },
+                            write: {
+                                ming: "all",
+                                flash: "all"
+                            }
                         }, user, function (err) {
                             ming.authenticate({
                                 username: "flash",
