@@ -119,8 +119,6 @@
                                     href: "/.well-known/governance?resource=/" + collection.name
                                 }
                             };
-                         // Do not expose _id of collection.
-                            delete collection._id;
                             return collection;
                         })
                     }
@@ -137,23 +135,15 @@
                     _links: {
                         self: {
                             href: req.path
-                        },
-                        governance: {
-                            href: "/.well-known/governance?resource=" + req.path
                         }
                     },
                     _embedded: {
                         users: users.map(function (user) {
                             user["_links"] = {
                                 self: {
-                                    href: "/ming.users/" + user._id
-                                },
-                                governance: {
-                                    href: "/.well-known/governance?resource=/ming.users/" + user._id
+                                    href: "/ming.users/" + user.username
                                 }
                             };
-                         // Do not expose _id of user.
-                            delete user._id;
                             return user;
                         })
                     }
@@ -176,8 +166,6 @@
                         href: "/.well-known/governance?resource=" + req.path
                     }
                 };
-             // Do not expose _id of collection.
-                delete collection._id;
                 res.send(collection);
             }
         });
@@ -229,9 +217,6 @@
                 user["_links"] = {
                     self: {
                         href: req.path
-                    },
-                    governance: {
-                        href: "/.well-known/governance?resource=" + req.path
                     }
                 };
              // Do not expose _id of user.
@@ -295,11 +280,11 @@
         });
     });
     app.post("/", [auth, express.json()], function (req, res, next) {
-        ming.insertCollection(req.body, req.user, function (err, id) {
+        ming.insertCollection(req.body, req.user, function (err, collectionName) {
             if (err !== null) {
                 next(err);
             } else {
-                res.location(req.body.name + "/" + id);
+                res.location(req.body.name + "/" + collectionName);
                 res.send(201, "Created");
             }
         });
