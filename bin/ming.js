@@ -119,8 +119,6 @@
                                     href: "/.well-known/governance?resource=/" + collection.name
                                 }
                             };
-                         // Do not expose _id of collection.
-                            delete collection._id;
                             return collection;
                         })
                     }
@@ -176,8 +174,6 @@
                         href: "/.well-known/governance?resource=" + req.path
                     }
                 };
-             // Do not expose _id of collection.
-                delete collection._id;
                 res.send(collection);
             }
         });
