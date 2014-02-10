@@ -940,6 +940,29 @@ describe("Ming", function () {
                 });
             });
 
+            it("should be possible for user ming to specify that the document inherits permissions from a specific URL", function (done) {
+                ming.authenticate({
+                    username: "ming",
+                    password: "ming"
+                }, function (err, user) {
+                    ming.updatePermissions("/planets/" + documentId, {
+                        _links: {
+                            inherit: {
+                                href: "https://dl.dropboxusercontent.com/s/gomr9p2wwqyjj8i/public.json"
+                            }
+                        }
+                    }, user, function (err) {
+                        ming.authenticate(null, function (err, user) {
+                            ming.getDocument("planets", documentId, user, function (err, document) {
+                                expect(err).to.be(null);
+                                expect(document.name).to.be("Mongo");
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+
         });
 
 
