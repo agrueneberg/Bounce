@@ -16,7 +16,9 @@ describe("Ming", function () {
 
     afterEach(function (done) {
         dataSource.then(function (db) {
-            db.dropDatabase(done);
+            db.dropDatabase(function () {
+                db.close(done);
+            });
         });
     });
 
