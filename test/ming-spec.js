@@ -560,9 +560,9 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                         // Change permissions from inherit to explicit listing.
-                            document._permissions.read = [userMingId, userFlashId];
-                            ming.updateDocument("planets", documentId, document, user, function (err) {
+                            ming.updatePermissions("/planets/" + documentId, {
+                                read: [userMingId, userFlashId]
+                            }, user, function (err) {
                                 ming.authenticate({
                                     username: "flash",
                                     password: "flash"
@@ -588,9 +588,9 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                         // Change permissions from inherit to explicit listing.
-                            document._permissions.write = [userMingId, userFlashId];
-                            ming.updateDocument("planets", documentId, document, user, function (err) {
+                            ming.updatePermissions("/planets/" + documentId, {
+                                write: [userMingId, userFlashId]
+                            }, user, function (err) {
                                 ming.authenticate({
                                     username: "flash",
                                     password: "flash"
@@ -615,10 +615,10 @@ describe("Ming", function () {
                         password: "ming"
                     }, function (err, user) {
                         ming.getDocument("planets", documentId, user, function (err, document) {
-                         // Change permissions from inherit to explicit listing.
-                            document._permissions.read = [userMingId, userFlashId];
-                            document._permissions.write = [userMingId, userFlashId];
-                            ming.updateDocument("planets", documentId, document, user, function (err) {
+                            ming.updatePermissions("/planets/" + documentId, {
+                                read: [userMingId, userFlashId],
+                                write: [userMingId, userFlashId]
+                            }, user, function (err) {
                                 ming.authenticate({
                                     username: "flash",
                                     password: "flash"
