@@ -295,11 +295,11 @@
         });
     });
     app.post("/", [auth, express.json()], function (req, res, next) {
-        ming.insertCollection(req.body, req.user, function (err, id) {
+        ming.insertCollection(req.body, req.user, function (err, collectionName) {
             if (err !== null) {
                 next(err);
             } else {
-                res.location(req.body.name + "/" + id);
+                res.location(req.body.name + "/" + collectionName);
                 res.send(201, "Created");
             }
         });
