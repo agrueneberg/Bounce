@@ -12,7 +12,7 @@
         "url": "https://bitbucket.org/agrueneberg/ming.git"
     },
     "scripts": {
-        "test": "./node_modules/.bin/mocha"
+        "test": "./node_modules/.bin/mocha -R spec"
     },
     "dependencies": {
         "yargs": "~1.0.15",
