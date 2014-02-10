@@ -56,6 +56,16 @@ describe("Ming", function () {
                 });
             });
 
+            it("should not allow the username public", function (done) {
+                ming.register({
+                    username: "public",
+                    password: "public"
+                }, function (err, id) {
+                    expect(err).to.be.a(errors.Conflict);
+                    done();
+                });
+            });
+
             it("should register a user", function (done) {
                 ming.register({
                     username: "ming",
@@ -124,19 +134,17 @@ describe("Ming", function () {
 
     describe("collections", function () {
 
-        var documentId, userMingId, userFlashId;
+        var documentId;
 
         beforeEach(function (done) {
             ming.register({
                 username: "ming",
                 password: "ming"
             }, function (err, id) {
-                userMingId = id;
                 ming.register({
                     username: "flash",
                     password: "flash"
                 }, function (err, id) {
-                    userFlashId = id;
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -328,19 +336,17 @@ describe("Ming", function () {
 
     describe("documents", function () {
 
-        var documentId, userMingId, userFlashId;
+        var documentId;
 
         beforeEach(function (done) {
             ming.register({
                 username: "ming",
                 password: "ming"
             }, function (err, id) {
-                userMingId = id;
                 ming.register({
                     username: "flash",
                     password: "flash"
                 }, function (err, id) {
-                    userFlashId = id;
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -738,19 +744,17 @@ describe("Ming", function () {
 
     describe("permissions", function () {
 
-        var documentId, userMingId, userFlashId;
+        var documentId;
 
         beforeEach(function (done) {
             ming.register({
                 username: "ming",
                 password: "ming"
             }, function (err, id) {
-                userMingId = id;
                 ming.register({
                     username: "flash",
                     password: "flash"
                 }, function (err, id) {
-                    userFlashId = id;
                     ming.authenticate({
                         username: "ming",
                         password: "ming"
@@ -860,7 +864,7 @@ describe("Ming", function () {
                     password: "ming"
                 }, function (err, user) {
                     ming.updatePermissions("/planets/" + documentId, {
-                        read: [userMingId, userFlashId]
+                        read: ["ming", "flash"]
                     }, user, function (err) {
                         ming.authenticate({
                             username: "flash",
@@ -887,7 +891,7 @@ describe("Ming", function () {
                 }, function (err, user) {
                     ming.getDocument("planets", documentId, user, function (err, document) {
                         ming.updatePermissions("/planets/" + documentId, {
-                            write: [userMingId, userFlashId]
+                            write: ["ming", "flash"]
                         }, user, function (err) {
                             ming.authenticate({
                                 username: "flash",
@@ -914,8 +918,8 @@ describe("Ming", function () {
                 }, function (err, user) {
                     ming.getDocument("planets", documentId, user, function (err, document) {
                         ming.updatePermissions("/planets/" + documentId, {
-                            read: [userMingId, userFlashId],
-                            write: [userMingId, userFlashId]
+                            read: ["ming", "flash"],
+                            write: ["ming", "flash"]
                         }, user, function (err) {
                             ming.authenticate({
                                 username: "flash",

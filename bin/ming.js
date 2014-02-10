@@ -135,23 +135,15 @@
                     _links: {
                         self: {
                             href: req.path
-                        },
-                        governance: {
-                            href: "/.well-known/governance?resource=" + req.path
                         }
                     },
                     _embedded: {
                         users: users.map(function (user) {
                             user["_links"] = {
                                 self: {
-                                    href: "/ming.users/" + user._id
-                                },
-                                governance: {
-                                    href: "/.well-known/governance?resource=/ming.users/" + user._id
+                                    href: "/ming.users/" + user.username
                                 }
                             };
-                         // Do not expose _id of user.
-                            delete user._id;
                             return user;
                         })
                     }
@@ -225,9 +217,6 @@
                 user["_links"] = {
                     self: {
                         href: req.path
-                    },
-                    governance: {
-                        href: "/.well-known/governance?resource=" + req.path
                     }
                 };
              // Do not expose _id of user.
