@@ -66,6 +66,16 @@ describe("Ming", function () {
                 });
             });
 
+            it("should not allow the username authenticated", function (done) {
+                ming.register({
+                    username: "authenticated",
+                    password: "authenticated"
+                }, function (err, id) {
+                    expect(err).to.be.a(errors.Conflict);
+                    done();
+                });
+            });
+
             it("should register a user", function (done) {
                 ming.register({
                     username: "ming",
@@ -968,7 +978,11 @@ describe("Ming", function () {
                             ming.getDocument("planets", documentId, user, function (err, document) {
                                 expect(err).to.be(null);
                                 expect(document.name).to.be("Mongo");
-                                done();
+                                document.name = "Mongo, Earth II";
+                                ming.updateDocument("planets", documentId, document, user, function (err) {
+                                    expect(err).to.be.a(errors.Forbidden);
+                                    done();
+                                });
                             });
                         });
                     });
