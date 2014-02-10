@@ -12,7 +12,10 @@
              })
              .options("connection-string", {
                  default: "mongodb://localhost/ming",
-                 describe: "MongoDB Connection String for the default deployment."
+                 describe: "MongoDB Connection String for the default deployment"
+             })
+             .options("database-permissions", {
+                 describe: "Database-level permissions"
              })
              .argv;
     express = require("express");
@@ -22,7 +25,8 @@
     errors = require("../lib/errors");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
     ming = require("../lib/ming")({
-        dataSource: dataSource
+        dataSource: dataSource,
+        databasePermissions: argv["database-permissions"]
     });
 
     app = express();
