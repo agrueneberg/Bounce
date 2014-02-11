@@ -212,7 +212,7 @@
 		{
 			"id": "6ba9ec45-0729-21e3-3f40-c0b5b3171c52",
 			"headers": "Authorization: {{authorization}}\n",
-			"url": "{{deployment}}/_prefix_.files/_file_?binary=true",
+			"url": "{{deployment}}/_prefix_.files/_file_?binary=1",
 			"pathVariables": {},
 			"method": "GET",
 			"data": [],

@@ -191,7 +191,7 @@
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
-        if (req.query.hasOwnProperty("binary") === true && req.query.binary === "true") {
+        if (req.query.hasOwnProperty("binary") === true && req.query.binary === "1") {
             ming.getFile(prefixParam, fileParam, req.user, function (err, file) {
                 if (err !== null) {
                     next(err);
