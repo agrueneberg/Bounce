@@ -108,6 +108,9 @@
                     _links: {
                         self: {
                             href: req.path
+                        },
+                        governance: {
+                            href: "/.well-known/governance?resource=/"
                         }
                     },
                     _embedded: {
