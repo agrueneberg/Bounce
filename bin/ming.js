@@ -179,9 +179,6 @@
                 if (err !== null) {
                     next(err);
                 } else {
-                 // Do not expose _id and resource of collection.
-                    delete permissions._id;
-                    delete permissions.resource;
                     res.send(permissions);
                 }
             });
@@ -220,8 +217,6 @@
                         href: req.path
                     }
                 };
-             // Do not expose _id of user.
-                delete user._id;
                 res.send(user);
             }
         });
