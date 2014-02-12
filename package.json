@@ -1,15 +1,15 @@
 {
-    "name": "ming",
-    "version": "0.2.1",
-    "description": "A Quasi-RESTful Web Service for MongoDB.",
-    "bugs": "https://bitbucket.org/agrueneberg/ming/issues",
+    "name": "bounce",
+    "version": "0.0.0",
+    "description": "",
+    "bugs": "https://github.com/agrueneberg/Bounce/issues",
     "license": "MIT",
     "author": "Alexander Grüneberg <alexander.grueneberg@googlemail.com>",
-    "main": "./lib/ming.js",
-    "bin": "./bin/ming.js",
+    "main": "./lib/bounce.js",
+    "bin": "./bin/bounce.js",
     "repository": {
         "type": "git",
-        "url": "https://bitbucket.org/agrueneberg/ming.git"
+        "url": "https://github.com/agrueneberg/Bounce.git"
     },
     "scripts": {
         "test": "./node_modules/.bin/mocha -R spec"

@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, authParser, bodyParser, errors, dataSource, ming, app, auth;
+    var argv, express, corser, authParser, bodyParser, errors, dataSource, bounce, app, auth;
 
     argv = require("yargs")
              .options("port", {
@@ -11,7 +11,7 @@
                  describe: "Port"
              })
              .options("connection-string", {
-                 default: "mongodb://localhost/ming",
+                 default: "mongodb://localhost/bounce",
                  describe: "MongoDB Connection String for the default deployment"
              })
              .options("database-permissions", {
@@ -24,7 +24,7 @@
     bodyParser = require("raw-body");
     errors = require("../lib/errors");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
-    ming = require("../lib/ming")({
+    bounce = require("../lib/bounce")({
         dataSource: dataSource,
         databasePermissions: argv["database-permissions"]
     });
@@ -34,7 +34,7 @@
     auth = function (req, res, next) {
         var unauthorized, credentials;
         unauthorized = function () {
-            res.setHeader("WWW-Authenticate", "Basic realm=\"Ming\"");
+            res.setHeader("WWW-Authenticate", "Basic realm=\"Bounce\"");
             res.send(401, "Unauthorized");
         };
         credentials = authParser(req);
@@ -47,7 +47,7 @@
             credentials.password = credentials.pass;
             delete credentials.pass;
         }
-        ming.authenticate(credentials, function (err, user) {
+        bounce.authenticate(credentials, function (err, user) {
             if (err !== null) {
                 next(err);
             } else {
@@ -100,7 +100,7 @@
     });
 
     app.get("/", auth, function (req, res, next) {
-        ming.getCollections(req.user, function (err, collections) {
+        bounce.getCollections(req.user, function (err, collections) {
             if (err !== null) {
                 next(err);
             } else {
@@ -130,8 +130,8 @@
             }
         });
     });
-    app.get("/ming.users", function (req, res, next) {
-        ming.getUsers(function (err, users) {
+    app.get("/bounce.users", function (req, res, next) {
+        bounce.getUsers(function (err, users) {
             if (err !== null) {
                 next(err);
             } else {
@@ -145,7 +145,7 @@
                         users: users.map(function (user) {
                             user["_links"] = {
                                 self: {
-                                    href: "/ming.users/" + user.username
+                                    href: "/bounce.users/" + user.username
                                 }
                             };
                             return user;
@@ -158,7 +158,7 @@
     app.get("/:collection", auth, function (req, res, next) {
         var collectionParam;
         collectionParam = req.params.collection;
-        ming.getCollection(collectionParam, req.user, function (err, collection) {
+        bounce.getCollection(collectionParam, req.user, function (err, collection) {
             if (err !== null) {
                 next(err);
             } else {
@@ -178,7 +178,7 @@
         if (req.query.hasOwnProperty("resource") === false) {
             next(new errors.BadRequest("Missing \"resource\" URL parameter."));
         } else {
-            ming.getPermissions(req.query.resource, req.user, function (err, permissions) {
+            bounce.getPermissions(req.query.resource, req.user, function (err, permissions) {
                 if (err !== null) {
                     next(err);
                 } else {
@@ -192,7 +192,7 @@
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
         if (req.query.hasOwnProperty("binary") === true && req.query.binary === "1") {
-            ming.getFile(prefixParam, fileParam, req.user, function (err, file) {
+            bounce.getFile(prefixParam, fileParam, req.user, function (err, file) {
                 if (err !== null) {
                     next(err);
                 } else {
@@ -208,10 +208,10 @@
             next();
         }
     });
-    app.get("/ming.users/:user", function (req, res, next) {
+    app.get("/bounce.users/:user", function (req, res, next) {
         var userParam;
         userParam = req.params.user;
-        ming.getUser(userParam, function (err, user) {
+        bounce.getUser(userParam, function (err, user) {
             if (err !== null) {
                 next(err);
             } else {
@@ -228,7 +228,7 @@
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
-        ming.getDocument(collectionParam, documentParam, req.user, function (err, document) {
+        bounce.getDocument(collectionParam, documentParam, req.user, function (err, document) {
             if (err !== null) {
                 next(err);
             } else {
@@ -259,7 +259,7 @@
         collectionParam = req.params.collection;
         documentParam = req.params.document;
         fieldParam = req.params.field;
-        ming.getField(collectionParam, documentParam, fieldParam, req.user, function (err, field) {
+        bounce.getField(collectionParam, documentParam, fieldParam, req.user, function (err, field) {
             var document;
             if (err !== null) {
                 next(err);
@@ -279,7 +279,7 @@
         });
     });
     app.post("/", [auth, express.json()], function (req, res, next) {
-        ming.insertCollection(req.body, req.user, function (err, collectionName) {
+        bounce.insertCollection(req.body, req.user, function (err, collectionName) {
             if (err !== null) {
                 next(err);
             } else {
@@ -302,7 +302,7 @@
         if (req.query.sort) {
             options.sort = req.query.sort;
         }
-        ming.query(collectionParam, query, options, req.user, function (err, documents) {
+        bounce.query(collectionParam, query, options, req.user, function (err, documents) {
             if (err !== null) {
                 next(err);
             } else {
@@ -362,7 +362,7 @@
         if (file.length === 0) {
             next(new errors.BadRequest("Empty body."));
         } else {
-            ming.insertFile(prefixParam, contentType, file, req.user, function (err, id) {
+            bounce.insertFile(prefixParam, contentType, file, req.user, function (err, id) {
                 if (err !== null) {
                     next(err);
                 } else {
@@ -372,14 +372,14 @@
             });
         }
     });
-    app.post("/ming.users", express.json(), function (req, res, next) {
+    app.post("/bounce.users", express.json(), function (req, res, next) {
         var user;
         user = req.body;
-        ming.register(user, function (err, id) {
+        bounce.register(user, function (err, id) {
             if (err !== null) {
                 next(err);
             } else {
-                res.location("ming.users/" + id);
+                res.location("bounce.users/" + id);
                 res.send(201, "Created");
             }
         });
@@ -388,7 +388,7 @@
         var collectionParam, document;
         collectionParam = req.params.collection;
         document = req.body;
-        ming.insertDocument(collectionParam, document, req.user, function (err, id) {
+        bounce.insertDocument(collectionParam, document, req.user, function (err, id) {
             if (err !== null) {
                 next(err);
             } else {
@@ -401,7 +401,7 @@
         var collectionParam, update;
         collectionParam = req.params.collection;
         update = req.body;
-        ming.updateCollection(collectionParam, update, req.user, function (err) {
+        bounce.updateCollection(collectionParam, update, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
@@ -413,7 +413,7 @@
         if (req.query.hasOwnProperty("resource") === false) {
             next(new errors.BadRequest("Missing \"resource\" URL parameter."));
         } else {
-            ming.updatePermissions(req.query.resource, req.body, req.user, function (err) {
+            bounce.updatePermissions(req.query.resource, req.body, req.user, function (err) {
                 if (err !== null) {
                     next(err);
                 } else {
@@ -427,7 +427,7 @@
         collectionParam = req.params.collection;
         documentParam = req.params.document;
         update = req.body;
-        ming.updateDocument(collectionParam, documentParam, update, req.user, function (err) {
+        bounce.updateDocument(collectionParam, documentParam, update, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
@@ -439,7 +439,7 @@
         var prefixParam, fileParam;
         prefixParam = req.params.prefix;
         fileParam = req.params.file;
-        ming.deleteFile(prefixParam, fileParam, req.user, function (err) {
+        bounce.deleteFile(prefixParam, fileParam, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
@@ -451,7 +451,7 @@
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
-        ming.deleteDocument(collectionParam, documentParam, req.user, function (err) {
+        bounce.deleteDocument(collectionParam, documentParam, req.user, function (err) {
             if (err !== null) {
                 next(err);
             } else {
@@ -462,6 +462,6 @@
 
     app.listen(argv.port);
 
-    console.log("Ming is running on port " + argv.port + ", connected to " + argv["connection-string"]);
+    console.log("Bounce is running on port " + argv.port + ", connected to " + argv["connection-string"]);
 
 }());

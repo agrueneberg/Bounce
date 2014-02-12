@@ -1,6 +1,6 @@
 {
 	"id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31",
-	"name": "Ming",
+	"name": "Bounce",
 	"description": "",
 	"order": [],
 	"folders": [
@@ -12,7 +12,7 @@
 				"7ba42ee1-1732-9156-bf9c-1b934f9f121d",
 				"c1f2844c-4a46-0857-5eae-67583537d535"
 			],
-			"collection_name": "Ming",
+			"collection_name": "Bounce",
 			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
 		},
 		{
@@ -28,7 +28,7 @@
 				"b914c76d-d3d6-ce53-7e2a-739d0721d70d",
 				"e97c4ad9-fd90-4696-1828-40fed8fededc"
 			],
-			"collection_name": "Ming",
+			"collection_name": "Bounce",
 			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
 		},
 		{
@@ -43,7 +43,7 @@
 				"3d4988df-ff35-84de-4636-fc991f52e283",
 				"46909c23-e330-c50f-6b0c-6f6dd43f4a1d"
 			],
-			"collection_name": "Ming",
+			"collection_name": "Bounce",
 			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
 		},
 		{
@@ -54,7 +54,7 @@
 				"2e9e7250-8907-70dc-fb20-907478715357",
 				"b272e63d-527c-8181-6435-6b82d00f6e81"
 			],
-			"collection_name": "Ming",
+			"collection_name": "Bounce",
 			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
 		},
 		{
@@ -66,7 +66,7 @@
 				"bf61cea9-3756-3512-1769-6bfa3bcb726d",
 				"896330d5-c032-6fce-e5e4-15f684eed476"
 			],
-			"collection_name": "Ming",
+			"collection_name": "Bounce",
 			"collection_id": "f0096e6d-f7b9-a2e8-4839-796b4d263c31"
 		}
 	],
@@ -246,7 +246,7 @@
 		{
 			"id": "896330d5-c032-6fce-e5e4-15f684eed476",
 			"headers": "Content-Type: application/json\n",
-			"url": "{{deployment}}/ming.users",
+			"url": "{{deployment}}/bounce.users",
 			"pathVariables": {},
 			"method": "POST",
 			"data": "{\n  \"username\": \"\",\n  \"password\": \"\"\n}",
@@ -314,7 +314,7 @@
 		{
 			"id": "bd43e30a-7d47-403a-e3d8-ee29fe8e703c",
 			"headers": "Authorization: {{authorization}}\n",
-			"url": "{{deployment}}/ming.users",
+			"url": "{{deployment}}/bounce.users",
 			"pathVariables": {},
 			"method": "GET",
 			"data": [],
@@ -332,7 +332,7 @@
 		{
 			"id": "bf61cea9-3756-3512-1769-6bfa3bcb726d",
 			"headers": "Authorization: {{authorization}}\n",
-			"url": "{{deployment}}/ming.users/_user_",
+			"url": "{{deployment}}/bounce.users/_user_",
 			"pathVariables": {},
 			"method": "GET",
 			"data": [],
