@@ -340,7 +340,17 @@ describe("Bounce", function () {
                 it("should sanitize the collection to update", function (done) {
                     bounce.getCollection("planets", authenticatedUser, function (err, collection) {
                         collection.name = "moons";
-                        collection._links = {};
+                        collection._links = {
+                            self: {
+                                href: "/"
+                            },
+                            governance: {
+                                href: "/"
+                            },
+                            test: {
+                                href: "/"
+                            }
+                        };
                         collection._embedded = {};
                         collection._creator = "flash";
                         collection._permissions = {};
@@ -348,7 +358,11 @@ describe("Bounce", function () {
                             bounce.getCollection("planets", authenticatedUser, function (err, updatedCollection) {
                                 expect(err).to.be(null);
                                 expect(updatedCollection.name).to.be("planets");
-                                expect(updatedCollection._links).to.be(undefined);
+                                expect(updatedCollection._links).to.eql({
+                                    test: {
+                                        href: "/"
+                                    }
+                                });
                                 expect(updatedCollection._embedded).to.be(undefined);
                                 expect(updatedCollection._creator).to.be(undefined);
                                 expect(updatedCollection._permissions).to.be(undefined);
@@ -582,14 +596,28 @@ describe("Bounce", function () {
 
                 it("should sanitize the document to insert", function (done) {
                     bounce.insertDocument("planets", {
-                        _links: {},
+                        _links: {
+                            self: {
+                                href: "/"
+                            },
+                            governance: {
+                                href: "/"
+                            },
+                            test: {
+                                href: "/"
+                            }
+                        },
                         _embedded: {},
                         _creator: "flash",
                         _permissions: {}
                     }, authenticatedUser, function (err, id) {
                         bounce.getDocument("planets", id, authenticatedUser, function (err, document) {
                             expect(err).to.be(null);
-                            expect(document._links).to.be(undefined);
+                            expect(document._links).to.eql({
+                                test: {
+                                    href: "/"
+                                }
+                            });
                             expect(document._embedded).to.be(undefined);
                             expect(document._creator).to.be(undefined);
                             expect(document._permissions).to.be(undefined);
@@ -657,17 +685,31 @@ describe("Bounce", function () {
 
                 it("should sanitize the document to update", function (done) {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
-                        document._links = {};
+                        document._links = {
+                            self: {
+                                href: "/"
+                            },
+                            governance: {
+                                href: "/"
+                            },
+                            test: {
+                                href: "/"
+                            }
+                        };
                         document._embedded = {};
                         document._creator = "flash";
                         document._permissions = {};
                         bounce.updateDocument("planets", documentId, document, authenticatedUser, function (err, id) {
                             bounce.getDocument("planets", documentId, authenticatedUser, function (err, updatedDocument) {
                                 expect(err).to.be(null);
-                                expect(updateDocument._links).to.be(undefined);
-                                expect(updateDocument._embedded).to.be(undefined);
-                                expect(updateDocument._creator).to.be(undefined);
-                                expect(updateDocument._permissions).to.be(undefined);
+                                expect(updatedDocument._links).to.eql({
+                                    test: {
+                                        href: "/"
+                                    }
+                                });
+                                expect(updatedDocument._embedded).to.be(undefined);
+                                expect(updatedDocument._creator).to.be(undefined);
+                                expect(updatedDocument._permissions).to.be(undefined);
                                 done();
                             });
                         });

@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, authParser, bodyParser, errors, dataSource, bounce, app, auth;
+    var argv, express, corser, authParser, bodyParser, errors, dataSource, bounce, app, auth, mergeLinks;
 
     argv = require("yargs")
              .options("port", {
@@ -61,6 +61,17 @@
         });
     };
 
+    mergeLinks = function (doc, links) {
+        var relations;
+        relations = Object.keys(links);
+        if (doc.hasOwnProperty("_links") === false && relations.length > 0) {
+            doc._links = {};
+        }
+        relations.forEach(function (link) {
+            doc._links[link] = links[link];
+        });
+    };
+
     app.configure(function () {
 
      // Handle CORS.
@@ -115,14 +126,14 @@
                     },
                     _embedded: {
                         collections: collections.map(function (collection) {
-                            collection["_links"] = {
+                            mergeLinks(collection, {
                                 self: {
                                     href: "/" + collection.name
                                 },
                                 governance: {
                                     href: "/.well-known/governance?resource=/" + collection.name
                                 }
-                            };
+                            });
                             return collection;
                         })
                     }
@@ -143,11 +154,11 @@
                     },
                     _embedded: {
                         users: users.map(function (user) {
-                            user["_links"] = {
+                            mergeLinks(user, {
                                 self: {
                                     href: "/bounce.users/" + user.username
                                 }
-                            };
+                            });
                             return user;
                         })
                     }
@@ -162,14 +173,14 @@
             if (err !== null) {
                 next(err);
             } else {
-                collection["_links"] = {
+                mergeLinks(collection, {
                     self: {
                         href: req.path
                     },
                     governance: {
                         href: "/.well-known/governance?resource=" + req.path
                     }
-                };
+                });
                 res.send(collection);
             }
         });
@@ -215,11 +226,11 @@
             if (err !== null) {
                 next(err);
             } else {
-                user["_links"] = {
+                mergeLinks(user, {
                     self: {
                         href: req.path
                     }
-                };
+                });
                 res.send(user);
             }
         });
@@ -240,14 +251,14 @@
                         contentType: document.contentType
                     };
                 }
-                document["_links"] = {
+                mergeLinks(document, {
                     self: {
                         href: req.path
                     },
                     governance: {
                         href: "/.well-known/governance?resource=" + req.path
                     }
-                };
+                });
              // Do not expose _id of document.
                 delete document._id;
                 res.send(document);
@@ -266,14 +277,14 @@
             } else {
                 document = {};
                 document[fieldParam] = field;
-                document["_links"] = {
+                mergeLinks(document, {
                     self: {
                         href: req.path
                     },
                     governance: {
                         href: "/.well-known/governance?resource=" + req.path
                     }
-                };
+                });
                 res.send(document);
             }
         });
@@ -327,14 +338,14 @@
                     },
                     _embedded: {
                         results: documents.map(function (document) {
-                            document["_links"] = {
+                            mergeLinks(document, {
                                 self: {
                                     href: "/" + collectionParam + "/" + document._id
                                 },
                                 governance: {
                                     href: "/.well-known/governance?resource=/" + collectionParam + "/" + document._id
                                 }
-                            };
+                            });
                          // Do not expose _id of document.
                             delete document._id;
                             return document;
