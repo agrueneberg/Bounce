@@ -282,7 +282,7 @@
                         href: req.path
                     },
                     governance: {
-                        href: "/.well-known/governance?resource=" + req.path
+                        href: "/.well-known/governance?resource=/" + collectionParam + "/" + documentParam
                     }
                 });
                 res.send(document);
