@@ -321,7 +321,7 @@ describe("Bounce", function () {
                 });
             });
 
-            it("should not allow user flash to update collection", function (done) {
+            it("should not allow user flash to update the collection", function (done) {
                 bounce.authenticate({
                     username: "flash",
                     password: "flash"
@@ -333,9 +333,72 @@ describe("Bounce", function () {
                 });
             });
 
-            it("should not allow the public user to update collection", function (done) {
+            it("should not allow the public user to update the collection", function (done) {
                 bounce.authenticate(null, function (err, user) {
                     bounce.updateCollection("planets", {}, user, function (err) {
+                        expect(err).to.be.a(errors.Forbidden);
+                        done();
+                    });
+                });
+            });
+
+        });
+
+        describe("deleteCollection", function () {
+
+            it("should throw an error if the collection is a system collection", function (done) {
+                bounce.authenticate({
+                    username: "ming",
+                    password: "ming"
+                }, function (err, user) {
+                    bounce.deleteCollection("system.users", user, function (err) {
+                        expect(err).to.be.a(errors.Forbidden);
+                        done();
+                    });
+                });
+            });
+
+            it("should throw an error if the collection does not exist", function (done) {
+                bounce.authenticate({
+                    username: "ming",
+                    password: "ming"
+                }, function (err, user) {
+                    bounce.deleteCollection("lizards", user, function (err) {
+                        expect(err).to.be.a(errors.NotFound);
+                        done();
+                    });
+                });
+            });
+
+            it("should allow user ming to delete the collection", function (done) {
+                bounce.authenticate({
+                    username: "ming",
+                    password: "ming"
+                }, function (err, user) {
+                    bounce.deleteCollection("planets", user, function (err) {
+                        bounce.getCollection("planets", user, function (err) {
+                            expect(err).to.be.a(errors.NotFound);
+                            done();
+                        });
+                    });
+                });
+            });
+
+            it("should not allow user flash to delete the collection", function (done) {
+                bounce.authenticate({
+                    username: "flash",
+                    password: "flash"
+                }, function (err, user) {
+                    bounce.deleteCollection("planets", user, function (err) {
+                        expect(err).to.be.a(errors.Forbidden);
+                        done();
+                    });
+                });
+            });
+
+            it("should not allow the public user to update the collection", function (done) {
+                bounce.authenticate(null, function (err, user) {
+                    bounce.deleteCollection("planets", user, function (err) {
                         expect(err).to.be.a(errors.Forbidden);
                         done();
                     });

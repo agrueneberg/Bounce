@@ -447,6 +447,17 @@
             }
         });
     });
+    app.delete("/:collection", auth, function (req, res, next) {
+        var collectionParam;
+        collectionParam = req.params.collection;
+        bounce.deleteCollection(collectionParam, req.user, function (err) {
+            if (err !== null) {
+                next(err);
+            } else {
+                res.send(200, "OK");
+            }
+        });
+    });
     app.delete("/:collection/:document", auth, function (req, res, next) {
         var collectionParam, documentParam;
         collectionParam = req.params.collection;
