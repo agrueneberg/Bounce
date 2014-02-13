@@ -115,27 +115,31 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send({
-                    _links: {
-                        self: {
-                            href: req.path
-                        },
-                        governance: {
-                            href: "/.well-known/governance?resource=/"
-                        }
-                    },
-                    _embedded: {
-                        collections: collections.map(function (collection) {
-                            mergeLinks(collection, {
+                res.format({
+                    "application/hal+json": function () {
+                        res.send({
+                            _links: {
                                 self: {
-                                    href: "/" + collection.name
+                                    href: req.path
                                 },
                                 governance: {
-                                    href: "/.well-known/governance?resource=/" + collection.name
+                                    href: "/.well-known/governance?resource=/"
                                 }
-                            });
-                            return collection;
-                        })
+                            },
+                            _embedded: {
+                                collections: collections.map(function (collection) {
+                                    mergeLinks(collection, {
+                                        self: {
+                                            href: "/" + collection.name
+                                        },
+                                        governance: {
+                                            href: "/.well-known/governance?resource=/" + collection.name
+                                        }
+                                    });
+                                    return collection;
+                                })
+                            }
+                        });
                     }
                 });
             }
@@ -146,21 +150,25 @@
             if (err !== null) {
                 next(err);
             } else {
-                res.send({
-                    _links: {
-                        self: {
-                            href: req.path
-                        }
-                    },
-                    _embedded: {
-                        users: users.map(function (user) {
-                            mergeLinks(user, {
+                res.format({
+                    "application/hal+json": function () {
+                        res.send({
+                            _links: {
                                 self: {
-                                    href: "/bounce.users/" + user.username
+                                    href: req.path
                                 }
-                            });
-                            return user;
-                        })
+                            },
+                            _embedded: {
+                                users: users.map(function (user) {
+                                    mergeLinks(user, {
+                                        self: {
+                                            href: "/bounce.users/" + user.username
+                                        }
+                                    });
+                                    return user;
+                                })
+                            }
+                        });
                     }
                 });
             }
@@ -173,15 +181,19 @@
             if (err !== null) {
                 next(err);
             } else {
-                mergeLinks(collection, {
-                    self: {
-                        href: req.path
-                    },
-                    governance: {
-                        href: "/.well-known/governance?resource=" + req.path
+                res.format({
+                    "application/hal+json": function () {
+                        mergeLinks(collection, {
+                            self: {
+                                href: req.path
+                            },
+                            governance: {
+                                href: "/.well-known/governance?resource=" + req.path
+                            }
+                        });
+                        res.send(collection);
                     }
                 });
-                res.send(collection);
             }
         });
     });
@@ -193,12 +205,16 @@
                 if (err !== null) {
                     next(err);
                 } else {
-                    mergeLinks(permissions, {
-                        self: {
-                            href: req.path + "?resource=" + req.query.resource
+                    res.format({
+                        "application/hal+json": function () {
+                            mergeLinks(permissions, {
+                                self: {
+                                    href: req.path + "?resource=" + req.query.resource
+                                }
+                            });
+                            res.send(permissions);
                         }
                     });
-                    res.send(permissions);
                 }
             });
         }
@@ -231,12 +247,16 @@
             if (err !== null) {
                 next(err);
             } else {
-                mergeLinks(user, {
-                    self: {
-                        href: req.path
+                res.format({
+                    "application/hal+json": function () {
+                        mergeLinks(user, {
+                            self: {
+                                href: req.path
+                            }
+                        });
+                        res.send(user);
                     }
                 });
-                res.send(user);
             }
         });
     });
@@ -256,17 +276,21 @@
                         contentType: document.contentType
                     };
                 }
-                mergeLinks(document, {
-                    self: {
-                        href: req.path
-                    },
-                    governance: {
-                        href: "/.well-known/governance?resource=" + req.path
+                res.format({
+                    "application/hal+json": function () {
+                        mergeLinks(document, {
+                            self: {
+                                href: req.path
+                            },
+                            governance: {
+                                href: "/.well-known/governance?resource=" + req.path
+                            }
+                        });
+                     // Do not expose _id of document.
+                        delete document._id;
+                        res.send(document);
                     }
                 });
-             // Do not expose _id of document.
-                delete document._id;
-                res.send(document);
             }
         });
     });
@@ -282,15 +306,19 @@
             } else {
                 document = {};
                 document[fieldParam] = field;
-                mergeLinks(document, {
-                    self: {
-                        href: req.path
-                    },
-                    governance: {
-                        href: "/.well-known/governance?resource=/" + collectionParam + "/" + documentParam
+                res.format({
+                    "application/hal+json": function () {
+                        mergeLinks(document, {
+                            self: {
+                                href: req.path
+                            },
+                            governance: {
+                                href: "/.well-known/governance?resource=/" + collectionParam + "/" + documentParam
+                            }
+                        });
+                        res.send(document);
                     }
                 });
-                res.send(document);
             }
         });
     });
@@ -332,29 +360,33 @@
                         };
                     });
                 }
-                res.send({
-                    _links: {
-                        self: {
-                            href: req.path
-                        },
-                        governance: {
-                            href: "/.well-known/governance?resource=/" + collectionParam
-                        }
-                    },
-                    _embedded: {
-                        results: documents.map(function (document) {
-                            mergeLinks(document, {
+                res.format({
+                    "application/hal+json": function () {
+                        res.send({
+                            _links: {
                                 self: {
-                                    href: "/" + collectionParam + "/" + document._id
+                                    href: req.path
                                 },
                                 governance: {
-                                    href: "/.well-known/governance?resource=/" + collectionParam + "/" + document._id
+                                    href: "/.well-known/governance?resource=/" + collectionParam
                                 }
-                            });
-                         // Do not expose _id of document.
-                            delete document._id;
-                            return document;
-                        })
+                            },
+                            _embedded: {
+                                results: documents.map(function (document) {
+                                    mergeLinks(document, {
+                                        self: {
+                                            href: "/" + collectionParam + "/" + document._id
+                                        },
+                                        governance: {
+                                            href: "/.well-known/governance?resource=/" + collectionParam + "/" + document._id
+                                        }
+                                    });
+                                 // Do not expose _id of document.
+                                    delete document._id;
+                                    return document;
+                                })
+                            }
+                        });
                     }
                 });
             }
