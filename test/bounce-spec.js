@@ -815,7 +815,7 @@ describe("Bounce", function () {
                     });
                 });
 
-                it("should not allow user flash to see the permissions for the resource", function (done) {
+                it("should not allow user flash to see the permissions of the resource", function (done) {
                     bounce.authenticate({
                         username: "flash",
                         password: "flash"
@@ -827,12 +827,40 @@ describe("Bounce", function () {
                     });
                 });
 
-                it("should not allow the public user to see the permissions for the resource", function (done) {
+                it("should not allow the public user to see the permissions of the resource", function (done) {
                     bounce.authenticate(null, function (err, user) {
                         bounce.getPermissions("/planets/" + documentId, user, function (err) {
                             expect(err).to.be.a(errors.Forbidden);
                             done();
                         });
+                    });
+                });
+
+                it("should allow the system to see the permissions of the collection", function (done) {
+                    bounce.getPermissions("/planets", null, function (err, permissions) {
+                        expect(err).to.be(null);
+                        expect(permissions).to.eql({
+                            _links: {
+                                inherit: {
+                                    href: "/"
+                                }
+                            }
+                        });
+                        done();
+                    });
+                });
+
+                it("should allow the system to see the permissions of the document", function (done) {
+                    bounce.getPermissions("/planets/" + documentId, null, function (err, permissions) {
+                        expect(err).to.be(null);
+                        expect(permissions).to.eql({
+                            _links: {
+                                inherit: {
+                                    href: "/planets"
+                                }
+                            }
+                        });
+                        done();
                     });
                 });
 
