@@ -20,7 +20,7 @@ describe("Bounce", function () {
         });
     });
 
-    describe("users", function () {
+    describe("users (bcrypt is slow)", function () {
 
         describe("register", function () {
 
