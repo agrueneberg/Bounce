@@ -193,6 +193,11 @@
                 if (err !== null) {
                     next(err);
                 } else {
+                    mergeLinks(permissions, {
+                        self: {
+                            href: req.path + "?resource=" + req.query.resource
+                        }
+                    });
                     res.send(permissions);
                 }
             });
