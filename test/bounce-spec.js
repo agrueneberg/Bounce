@@ -840,8 +840,105 @@ describe("Bounce", function () {
 
             describe("updatePermissions", function () {
 
+                it("should throw an error if the permissions are not well-defined", function (done) {
+                    bounce.updatePermissions("/planets/" + documentId, {
+                        govern: {
+                            ming: "all"
+                        }
+                    }, authenticatedUser, function (err) {
+                        expect(err).to.be.a(errors.BadRequest);
+                        bounce.updatePermissions("/planets/" + documentId, {
+                            govern: {
+                                ming: "all"
+                            },
+                            read: {
+                                ming: "all"
+                            }
+                        }, authenticatedUser, function (err) {
+                            expect(err).to.be.a(errors.BadRequest);
+                            bounce.updatePermissions("/planets/" + documentId, {
+                                govern: {
+                                    ming: "all"
+                                },
+                                read: {
+                                    ming: "all"
+                                },
+                                write: {
+                                    ming: "all"
+                                }
+                            }, authenticatedUser, function (err) {
+                                expect(err).to.be.a(errors.BadRequest);
+                                bounce.updatePermissions("/planets/" + documentId, {
+                                    _links: {
+                                        example: {
+                                            href: "http://example.com"
+                                        }
+                                    }
+                                }, authenticatedUser, function (err) {
+                                    expect(err).to.be.a(errors.BadRequest);
+                                    done();
+                                });
+                            });
+                        });
+                    });
+                });
+
+                it("should accept permissions that contain all operators", function (done) {
+                    bounce.updatePermissions("/planets/" + documentId, {
+                        govern: {
+                            ming: "all"
+                        },
+                        read: {
+                            ming: "all"
+                        },
+                        write: {
+                            ming: "all"
+                        },
+                        add: {
+                            ming: "all"
+                        }
+                    }, authenticatedUser, function (err) {
+                        expect(err).to.be(null);
+                        done();
+                    });
+                });
+
+                it("should accept permissions that contain only a link", function (done) {
+                    bounce.updatePermissions("/planets/" + documentId, {
+                        _links: {
+                            inherit: {
+                                href: "/planet"
+                            }
+                        }
+                    }, authenticatedUser, function (err) {
+                        expect(err).to.be(null);
+                        done();
+                    });
+                });
+
+                it("should accept permissions that contain both operators and a link", function (done) {
+                    bounce.updatePermissions("/planets/" + documentId, {
+                        _links: {
+                            inherit: {
+                                href: "/planet"
+                            }
+                        },
+                        read: {
+                            ming: "all"
+                        }
+                    }, authenticatedUser, function (err) {
+                        expect(err).to.be(null);
+                        done();
+                    });
+                });
+
                 it("should be possible for user ming to allow user flash to see the document, but not to update it", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
+                        _links: {
+                            inherit: {
+                                href: "/planets"
+                            }
+                        },
                         read: {
                             ming: "all",
                             flash: "all"
@@ -867,6 +964,11 @@ describe("Bounce", function () {
                 it("should be possible for user ming to allow user flash to update the document, but not read it", function (done) {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
                         bounce.updatePermissions("/planets/" + documentId, {
+                            _links: {
+                                inherit: {
+                                    href: "/planets"
+                                }
+                            },
                             write: {
                                 ming: "all",
                                 flash: "all"
@@ -892,6 +994,11 @@ describe("Bounce", function () {
                 it("should be possible for user ming to allow user flash both to see and update the document", function (done) {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
                         bounce.updatePermissions("/planets/" + documentId, {
+                            _links: {
+                                inherit: {
+                                    href: "/planets"
+                                }
+                            },
                             read: {
                                 ming: "all",
                                 flash: "all"
