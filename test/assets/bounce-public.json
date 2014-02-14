@@ -1,0 +1,14 @@
+{
+    "govern": {
+        "authenticated": "all"
+    },
+    "read": {
+        "public": "all"
+    },
+    "write": {
+        "authenticated": "all"
+    },
+    "add": {
+        "authenticated": "all"
+    }
+}

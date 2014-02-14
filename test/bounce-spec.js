@@ -1058,7 +1058,7 @@ describe("Bounce", function () {
                     bounce.updatePermissions("/planets/" + documentId, {
                         _links: {
                             inherit: {
-                                href: "https://dl.dropboxusercontent.com/s/gomr9p2wwqyjj8i/public.json"
+                                href: "https://raw2.github.com/agrueneberg/Bounce/master/test/assets/bounce-public.json"
                             }
                         }
                     }, authenticatedUser, function (err) {
