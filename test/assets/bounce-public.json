@@ -1,14 +1,18 @@
 {
-    "govern": {
-        "authenticated": "all"
-    },
-    "read": {
-        "public": "all"
-    },
-    "write": {
-        "authenticated": "all"
-    },
-    "add": {
-        "authenticated": "all"
-    }
+    "govern": [{
+        "role": "authenticated",
+        "state": "all"
+    }],
+    "read": [{
+        "role": "public",
+        "state": "all"
+    }],
+    "write": [{
+        "role": "authenticated",
+        "state": "all"
+    }],
+    "add": [{
+        "role": "authenticated",
+        "state": "all"
+    }]
 }

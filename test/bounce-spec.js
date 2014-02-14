@@ -870,30 +870,36 @@ describe("Bounce", function () {
 
                 it("should throw an error if the permissions are not well-defined", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        govern: {
-                            ming: "all"
-                        }
+                        govern: [{
+                            username: "ming",
+                            state: "all"
+                        }]
                     }, authenticatedUser, function (err) {
                         expect(err).to.be.a(errors.BadRequest);
                         bounce.updatePermissions("/planets/" + documentId, {
-                            govern: {
-                                ming: "all"
-                            },
-                            read: {
-                                ming: "all"
-                            }
+                            govern: [{
+                                username: "ming",
+                                state: "all"
+                            }],
+                            read: [{
+                                username: "ming",
+                                state: "all"
+                            }]
                         }, authenticatedUser, function (err) {
                             expect(err).to.be.a(errors.BadRequest);
                             bounce.updatePermissions("/planets/" + documentId, {
-                                govern: {
-                                    ming: "all"
-                                },
-                                read: {
-                                    ming: "all"
-                                },
-                                write: {
-                                    ming: "all"
-                                }
+                                govern: [{
+                                    username: "ming",
+                                    state: "all"
+                                }],
+                                read: [{
+                                    username: "ming",
+                                    state: "all"
+                                }],
+                                write: [{
+                                    username: "ming",
+                                    state: "all"
+                                }]
                             }, authenticatedUser, function (err) {
                                 expect(err).to.be.a(errors.BadRequest);
                                 bounce.updatePermissions("/planets/" + documentId, {
@@ -913,18 +919,22 @@ describe("Bounce", function () {
 
                 it("should accept permissions that contain all operators", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        govern: {
-                            ming: "all"
-                        },
-                        read: {
-                            ming: "all"
-                        },
-                        write: {
-                            ming: "all"
-                        },
-                        add: {
-                            ming: "all"
-                        }
+                        govern: [{
+                            username: "ming",
+                            state: "all"
+                        }],
+                        read: [{
+                            username: "ming",
+                            state: "all"
+                        }],
+                        write: [{
+                            username: "ming",
+                            state: "all"
+                        }],
+                        add: [{
+                            username: "ming",
+                            state: "all"
+                        }]
                     }, authenticatedUser, function (err) {
                         expect(err).to.be(null);
                         done();
@@ -951,9 +961,10 @@ describe("Bounce", function () {
                                 href: "/planet"
                             }
                         },
-                        read: {
-                            ming: "all"
-                        }
+                        read: [{
+                            username: "ming",
+                            state: "all"
+                        }]
                     }, authenticatedUser, function (err) {
                         expect(err).to.be(null);
                         done();
@@ -967,10 +978,13 @@ describe("Bounce", function () {
                                 href: "/planets"
                             }
                         },
-                        read: {
-                            ming: "all",
-                            flash: "all"
-                        }
+                        read: [{
+                            username: "ming",
+                            state: "all"
+                        }, {
+                            username: "flash",
+                            state: "all"
+                        }]
                     }, authenticatedUser, function (err) {
                         bounce.authenticate({
                             username: "flash",
@@ -997,10 +1011,13 @@ describe("Bounce", function () {
                                     href: "/planets"
                                 }
                             },
-                            write: {
-                                ming: "all",
-                                flash: "all"
-                            }
+                            write: [{
+                                username: "ming",
+                                state: "all"
+                            }, {
+                                username: "flash",
+                                state: "all"
+                            }]
                         }, authenticatedUser, function (err) {
                             bounce.authenticate({
                                 username: "flash",
@@ -1027,14 +1044,20 @@ describe("Bounce", function () {
                                     href: "/planets"
                                 }
                             },
-                            read: {
-                                ming: "all",
-                                flash: "all"
-                            },
-                            write: {
-                                ming: "all",
-                                flash: "all"
-                            }
+                            read: [{
+                                username: "ming",
+                                state: "all"
+                            }, {
+                                username: "flash",
+                                state: "all"
+                            }],
+                            write: [{
+                                username: "ming",
+                                state: "all"
+                            }, {
+                                username: "flash",
+                                state: "all"
+                            }]
                         }, authenticatedUser, function (err) {
                             bounce.authenticate({
                                 username: "flash",
