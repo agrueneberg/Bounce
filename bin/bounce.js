@@ -210,8 +210,12 @@
                             mergeLinks(permissions, {
                                 self: {
                                     href: req.path + "?resource=" + req.query.resource
+                                },
+                                inherit: {
+                                    href: permissions._inherit
                                 }
                             });
+                            delete permissions._inherit;
                             res.send(permissions);
                         }
                     });
@@ -458,10 +462,24 @@
         });
     });
     app.put("/.well-known/governance", [auth, express.json()], function (req, res, next) {
+        var permissions;
         if (req.query.hasOwnProperty("resource") === false) {
             next(new errors.BadRequest("Missing \"resource\" URL parameter."));
         } else {
-            bounce.updatePermissions(req.query.resource, req.body, req.user, function (err) {
+            permissions = req.body;
+         // Reformat permissions.
+            if (req.is("application/hal+json") === true) {
+                if (permissions.hasOwnProperty("_links") === true && permissions._links.hasOwnProperty("inherit") === true && permissions._links.inherit.hasOwnProperty("href") === true && typeof permissions._links.inherit.href === "string") {
+                    permissions._inherit = permissions._links.inherit.href;
+                 // Delete links while preserving others.
+                    if (Object.keys(permissions._links).length > 1) {
+                        delete permissions._links.inherit;
+                    } else {
+                        delete permissions._links;
+                    }
+                }
+            }
+            bounce.updatePermissions(req.query.resource, permissions, req.user, function (err) {
                 if (err !== null) {
                     next(err);
                 } else {

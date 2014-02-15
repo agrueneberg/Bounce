@@ -810,7 +810,7 @@ describe("Bounce", function () {
                 it("should allow user ming to see that the resource inherits from another resource", function (done) {
                     bounce.getPermissions("/planets/" + documentId, authenticatedUser, function (err, permissions) {
                         expect(err).to.be(null);
-                        expect(permissions._links.inherit.href).to.be("/planets");
+                        expect(permissions._inherit).to.be("/planets");
                         done();
                     });
                 });
@@ -840,11 +840,7 @@ describe("Bounce", function () {
                     bounce.getPermissions("/planets", null, function (err, permissions) {
                         expect(err).to.be(null);
                         expect(permissions).to.eql({
-                            _links: {
-                                inherit: {
-                                    href: "/"
-                                }
-                            }
+                            _inherit: "/"
                         });
                         done();
                     });
@@ -854,11 +850,7 @@ describe("Bounce", function () {
                     bounce.getPermissions("/planets/" + documentId, null, function (err, permissions) {
                         expect(err).to.be(null);
                         expect(permissions).to.eql({
-                            _links: {
-                                inherit: {
-                                    href: "/planets"
-                                }
-                            }
+                            _inherit: "/planets"
                         });
                         done();
                     });
@@ -943,11 +935,7 @@ describe("Bounce", function () {
 
                 it("should accept permissions that contain only a link", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        _links: {
-                            inherit: {
-                                href: "/planet"
-                            }
-                        }
+                        _inherit: "/planets"
                     }, authenticatedUser, function (err) {
                         expect(err).to.be(null);
                         done();
@@ -956,11 +944,7 @@ describe("Bounce", function () {
 
                 it("should accept permissions that contain both operators and a link", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        _links: {
-                            inherit: {
-                                href: "/planet"
-                            }
-                        },
+                        _inherit: "/planets",
                         read: [{
                             username: "ming",
                             state: "all"
@@ -973,11 +957,7 @@ describe("Bounce", function () {
 
                 it("should be possible for user ming to allow user flash to see the document, but not to update it", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        _links: {
-                            inherit: {
-                                href: "/planets"
-                            }
-                        },
+                        _inherit: "/planets",
                         read: [{
                             username: "ming",
                             state: "all"
@@ -1006,11 +986,7 @@ describe("Bounce", function () {
                 it("should be possible for user ming to allow user flash to update the document, but not read it", function (done) {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
                         bounce.updatePermissions("/planets/" + documentId, {
-                            _links: {
-                                inherit: {
-                                    href: "/planets"
-                                }
-                            },
+                            _inherit: "/planets",
                             write: [{
                                 username: "ming",
                                 state: "all"
@@ -1039,11 +1015,7 @@ describe("Bounce", function () {
                 it("should be possible for user ming to allow user flash both to see and update the document", function (done) {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
                         bounce.updatePermissions("/planets/" + documentId, {
-                            _links: {
-                                inherit: {
-                                    href: "/planets"
-                                }
-                            },
+                            _inherit: "/planets",
                             read: [{
                                 username: "ming",
                                 state: "all"
@@ -1079,11 +1051,7 @@ describe("Bounce", function () {
 
                 it("should be possible for user ming to specify that the document inherits permissions from a specific URL", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        _links: {
-                            inherit: {
-                                href: "https://raw2.github.com/agrueneberg/Bounce/master/test/assets/bounce-public.json"
-                            }
-                        }
+                        _inherit: "https://raw2.github.com/agrueneberg/Bounce/master/test/assets/bounce-public.json"
                     }, authenticatedUser, function (err) {
                         bounce.authenticate(null, function (err, user) {
                             bounce.getDocument("planets", documentId, user, function (err, document) {
