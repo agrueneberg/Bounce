@@ -471,12 +471,7 @@
             if (req.is("application/hal+json") === true) {
                 if (permissions.hasOwnProperty("_links") === true && permissions._links.hasOwnProperty("inherit") === true && permissions._links.inherit.hasOwnProperty("href") === true && typeof permissions._links.inherit.href === "string") {
                     permissions._inherit = permissions._links.inherit.href;
-                 // Delete links while preserving others.
-                    if (Object.keys(permissions._links).length > 1) {
-                        delete permissions._links.inherit;
-                    } else {
-                        delete permissions._links;
-                    }
+                    delete permissions._links;
                 }
             }
             bounce.updatePermissions(req.query.resource, permissions, req.user, function (err) {

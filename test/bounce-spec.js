@@ -902,7 +902,12 @@ describe("Bounce", function () {
                                     }
                                 }, authenticatedUser, function (err) {
                                     expect(err).to.be.a(errors.BadRequest);
-                                    done();
+                                    bounce.updatePermissions("/planets/" + documentId, {
+                                        hello: "world"
+                                    }, authenticatedUser, function (err) {
+                                        expect(err).to.be.a(errors.BadRequest);
+                                        done();
+                                    });
                                 });
                             });
                         });
