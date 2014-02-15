@@ -223,19 +223,23 @@
             next(new errors.BadRequest("Missing \"resource\" URL parameter."));
         } else {
             bounce.getPermissions(req.query.resource, req.user, function (err, permissions) {
+                var links;
                 if (err !== null) {
                     next(err);
                 } else {
+                    links = {
+                        self: {
+                            href: req.path + "?resource=" + req.query.resource
+                        }
+                    };
+                    if (permissions.hasOwnProperty("_inherit") === true) {
+                        links.inherit = {
+                            href: permissions._inherit
+                        };
+                    }
                     res.format({
                         "application/hal+json": function () {
-                            mergeLinks(permissions, {
-                                self: {
-                                    href: req.path + "?resource=" + req.query.resource
-                                },
-                                inherit: {
-                                    href: permissions._inherit
-                                }
-                            });
+                            mergeLinks(permissions, links);
                             delete permissions._inherit;
                             res.send(permissions);
                         }
