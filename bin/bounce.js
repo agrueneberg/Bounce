@@ -124,7 +124,7 @@
             } else if (err.hasOwnProperty("status") === true) {
                 res.send(err.status, err.message);
             } else {
-                console.error(err);
+                console.error(err.stack);
                 res.send(500, "Internal Server Error");
             }
         });
