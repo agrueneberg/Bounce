@@ -120,6 +120,8 @@
         app.use(function (err, req, res, next) {
             if (err.hasOwnProperty("statusCode") === true) {
                 res.send(err.statusCode, err.message);
+            } else if (err.hasOwnProperty("status") === true) {
+                res.send(err.status, err.message);
             } else {
                 console.error(err);
                 res.send(500, "Internal Server Error");
