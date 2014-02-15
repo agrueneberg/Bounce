@@ -236,11 +236,17 @@
                         links.inherit = {
                             href: permissions._inherit
                         };
+                        delete permissions._inherit;
                     }
                     res.format({
+                        "application/json": function () {
+                            res.header("Link", Object.keys(links).map(function (relation) {
+                                return "<" + links[relation].href + ">; rel=\"" + relation + "\"";
+                            }));
+                            res.send(permissions);
+                        },
                         "application/hal+json": function () {
                             mergeLinks(permissions, links);
-                            delete permissions._inherit;
                             res.send(permissions);
                         }
                     });
