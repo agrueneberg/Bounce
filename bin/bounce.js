@@ -3,8 +3,8 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, authParser, bodyParser, errors, dataSource,
-        bounce, app, auth, filterMediaType, mergeLinks;
+    var argv, express, corser, authParser, bodyParser, parseLinks, errors,
+        dataSource, bounce, app, auth, filterMediaType, mergeLinks;
 
     argv = require("yargs")
              .options("port", {
@@ -23,6 +23,7 @@
     corser = require("corser");
     authParser = require("basic-auth");
     bodyParser = require("raw-body");
+    parseLinks = require("parse-links");
     errors = require("../lib/errors");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
     bounce = require("../lib/bounce")({
@@ -95,7 +96,7 @@
      // Handle CORS.
         app.use(corser.create({
             methods: corser.simpleMethods.concat(["DELETE", "PUT"]),
-            requestHeaders: corser.simpleRequestHeaders.concat(["Authorization"]),
+            requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "Link"]),
             responseHeaders: corser.simpleResponseHeaders.concat(["Link", "Location"])
         }));
 
@@ -482,13 +483,20 @@
         });
     });
     app.put("/.well-known/governance", [auth, filterMediaType(["application/json", "application/hal+json"]), express.json()], function (req, res, next) {
-        var permissions;
+        var permissions, links;
         if (req.query.hasOwnProperty("resource") === false) {
             next(new errors.BadRequest("Missing \"resource\" URL parameter."));
         } else {
             permissions = req.body;
-         // Reformat permissions.
-            if (req.is("application/hal+json") === true) {
+         // Try to find the inherit link in different formats.
+            if (req.is("application/json") === true) {
+                if (req.headers.hasOwnProperty("link") === true) {
+                    links = parseLinks(req.headers.link);
+                    if (links.hasOwnProperty("inherit") === true) {
+                        permissions._inherit = links.inherit;
+                    }
+                }
+            } else if (req.is("application/hal+json") === true) {
                 if (permissions.hasOwnProperty("_links") === true && permissions._links.hasOwnProperty("inherit") === true && permissions._links.inherit.hasOwnProperty("href") === true && typeof permissions._links.inherit.href === "string") {
                     permissions._inherit = permissions._links.inherit.href;
                     delete permissions._links;

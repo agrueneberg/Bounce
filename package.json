@@ -24,7 +24,8 @@
         "async": "~0.2.10",
         "bluebird": "~1.0.3",
         "bcrypt": "~0.7.7",
-        "request": "~2.33.0"
+        "request": "~2.33.0",
+        "parse-links": "~0.1.0"
     },
     "devDependencies": {
         "mocha": "1.17.x",
