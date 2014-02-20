@@ -282,7 +282,7 @@
 		},
 		{
 			"id": "9fa75969-5d8d-b3eb-0b26-66d0b579cad4",
-			"headers": "Authorization: {{authorization}}\nContent-Type: application/json\n",
+			"headers": "Authorization: {{authorization}}\nContent-Type: application/hal+json\n",
 			"url": "{{deployment}}/.well-known/governance?resource=_resource_",
 			"pathVariables": {},
 			"method": "PUT",
