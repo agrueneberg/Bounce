@@ -3,8 +3,8 @@
 (function () {
     "use strict";
 
-    var argv, express, corser, authParser, bodyParser, parseLinks, errors,
-        dataSource, bounce, app, auth, filterMediaType, mergeLinks;
+    var argv, express, corser, authParser, bodyParser, rawBody, parseLinks,
+        errors, dataSource, bounce, app, auth, filterMediaType, mergeLinks;
 
     argv = require("yargs")
              .options("port", {
@@ -22,7 +22,8 @@
     express = require("express");
     corser = require("corser");
     authParser = require("basic-auth");
-    bodyParser = require("raw-body");
+    bodyParser = require("body-parser");
+    rawBody = require("raw-body");
     parseLinks = require("parse-links");
     errors = require("../lib/errors");
     dataSource = require("../lib/data-source")(argv["connection-string"]);
@@ -357,7 +358,7 @@
             }
         });
     });
-    app.post("/", [auth, filterMediaType("application/json"), express.json()], function (req, res, next) {
+    app.post("/", [auth, filterMediaType("application/json"), bodyParser.json()], function (req, res, next) {
         bounce.insertCollection(req.body, req.user, function (err, collectionName) {
             if (err !== null) {
                 next(err);
@@ -367,7 +368,7 @@
             }
         });
     });
-    app.post("/:collection/query", [auth, filterMediaType("application/json"), express.json()], function (req, res, next) {
+    app.post("/:collection/query", [auth, filterMediaType("application/json"), bodyParser.json()], function (req, res, next) {
         var collectionParam, query, options;
         collectionParam = req.params.collection;
         query = req.body;
@@ -428,7 +429,7 @@
         });
     });
     app.post("/:prefix.files", auth, function (req, res, next) {
-        bodyParser(req, function (err, buffer) {
+        rawBody(req, function (err, buffer) {
             if (err !== null) {
                 next(err);
             } else {
@@ -455,7 +456,7 @@
             });
         }
     });
-    app.post("/bounce.users", [filterMediaType("application/json"), express.json()], function (req, res, next) {
+    app.post("/bounce.users", [filterMediaType("application/json"), bodyParser.json()], function (req, res, next) {
         var user;
         user = req.body;
         bounce.register(user, function (err, id) {
@@ -467,7 +468,7 @@
             }
         });
     });
-    app.post("/:collection", [auth, filterMediaType("application/json"), express.json()], function (req, res, next) {
+    app.post("/:collection", [auth, filterMediaType("application/json"), bodyParser.json()], function (req, res, next) {
         var collectionParam, document;
         collectionParam = req.params.collection;
         document = req.body;
@@ -480,7 +481,7 @@
             }
         });
     });
-    app.put("/:collection", [auth, filterMediaType("application/json"), express.json()], function (req, res, next) {
+    app.put("/:collection", [auth, filterMediaType("application/json"), bodyParser.json()], function (req, res, next) {
         var collectionParam, update;
         collectionParam = req.params.collection;
         update = req.body;
@@ -492,7 +493,7 @@
             }
         });
     });
-    app.put("/.well-known/governance", [auth, filterMediaType(["application/json", "application/hal+json"]), express.json()], function (req, res, next) {
+    app.put("/.well-known/governance", [auth, filterMediaType(["application/json", "application/hal+json"]), bodyParser.json()], function (req, res, next) {
         var permissions, links;
         if (req.query.hasOwnProperty("resource") === false) {
             next(new errors.BadRequest("Missing \"resource\" URL parameter."));
@@ -521,7 +522,7 @@
             });
         }
     });
-    app.put("/:collection/:document", [auth, filterMediaType("application/json"), express.json()], function (req, res, next) {
+    app.put("/:collection/:document", [auth, filterMediaType("application/json"), bodyParser.json()], function (req, res, next) {
         var collectionParam, documentParam, update;
         collectionParam = req.params.collection;
         documentParam = req.params.document;
