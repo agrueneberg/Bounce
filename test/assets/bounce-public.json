@@ -1,17 +1,18 @@
 {
-    "govern": [{
+    "rules": [{
+        "operator": "govern",
         "role": "authenticated",
         "state": "all"
-    }],
-    "read": [{
+    }, {
+        "operator": "read",
         "role": "public",
         "state": "all"
-    }],
-    "write": [{
+    }, {
+        "operator": "write",
         "role": "authenticated",
         "state": "all"
-    }],
-    "add": [{
+    }, {
+        "operator": "add",
         "role": "authenticated",
         "state": "all"
     }]

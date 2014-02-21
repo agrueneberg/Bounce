@@ -861,52 +861,65 @@ describe("Bounce", function () {
             describe("updatePermissions", function () {
 
                 it("should throw an error if the permissions are not well-defined", function (done) {
-                    bounce.updatePermissions("/planets/" + documentId, {
-                        govern: [{
-                            username: "ming",
-                            state: "all"
-                        }]
-                    }, authenticatedUser, function (err) {
+                    bounce.updatePermissions("/planets/" + documentId, {}, authenticatedUser, function (err) {
                         expect(err).to.be.a(errors.BadRequest);
                         bounce.updatePermissions("/planets/" + documentId, {
-                            govern: [{
-                                username: "ming",
-                                state: "all"
-                            }],
-                            read: [{
+                            rules: [{
+                                operator: "govern",
                                 username: "ming",
                                 state: "all"
                             }]
                         }, authenticatedUser, function (err) {
                             expect(err).to.be.a(errors.BadRequest);
                             bounce.updatePermissions("/planets/" + documentId, {
-                                govern: [{
+                                rules: [{
+                                    operator: "govern",
                                     username: "ming",
                                     state: "all"
-                                }],
-                                read: [{
-                                    username: "ming",
-                                    state: "all"
-                                }],
-                                write: [{
+                                }, {
+                                    operator: "read",
                                     username: "ming",
                                     state: "all"
                                 }]
                             }, authenticatedUser, function (err) {
                                 expect(err).to.be.a(errors.BadRequest);
                                 bounce.updatePermissions("/planets/" + documentId, {
-                                    _links: {
-                                        example: {
-                                            href: "http://example.com"
-                                        }
-                                    }
+                                    rules: [{
+                                        operator: "govern",
+                                        username: "ming",
+                                        state: "all"
+                                    }, {
+                                        operator: "read",
+                                        username: "ming",
+                                        state: "all"
+                                    }, {
+                                        operator: "write",
+                                        username: "ming",
+                                        state: "all"
+                                    }]
                                 }, authenticatedUser, function (err) {
                                     expect(err).to.be.a(errors.BadRequest);
                                     bounce.updatePermissions("/planets/" + documentId, {
-                                        hello: "world"
+                                        _links: {
+                                            example: {
+                                                href: "http://example.com"
+                                            }
+                                        }
                                     }, authenticatedUser, function (err) {
                                         expect(err).to.be.a(errors.BadRequest);
-                                        done();
+                                        bounce.updatePermissions("/planets/" + documentId, {
+                                            hello: "world"
+                                        }, authenticatedUser, function (err) {
+                                            expect(err).to.be.a(errors.BadRequest);
+                                            bounce.updatePermissions("/planets/" + documentId, {
+                                                rules: [{
+                                                    hello: "world"
+                                                }]
+                                            }, authenticatedUser, function (err) {
+                                                expect(err).to.be.a(errors.BadRequest);
+                                                done();
+                                            });
+                                        });
                                     });
                                 });
                             });
@@ -916,19 +929,20 @@ describe("Bounce", function () {
 
                 it("should accept permissions that contain all operators", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
-                        govern: [{
+                        rules: [{
+                            operator: "govern",
                             username: "ming",
                             state: "all"
-                        }],
-                        read: [{
+                        }, {
+                            operator: "read",
                             username: "ming",
                             state: "all"
-                        }],
-                        write: [{
+                        }, {
+                            operator: "write",
                             username: "ming",
                             state: "all"
-                        }],
-                        add: [{
+                        }, {
+                            operator: "add",
                             username: "ming",
                             state: "all"
                         }]
@@ -950,7 +964,8 @@ describe("Bounce", function () {
                 it("should accept permissions that contain both operators and a link", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
                         _inherit: "/planets",
-                        read: [{
+                        rules: [{
+                            operator: "read",
                             username: "ming",
                             state: "all"
                         }]
@@ -963,10 +978,12 @@ describe("Bounce", function () {
                 it("should be possible for user ming to allow user flash to see the document, but not to update it", function (done) {
                     bounce.updatePermissions("/planets/" + documentId, {
                         _inherit: "/planets",
-                        read: [{
+                        rules: [{
+                            operator: "read",
                             username: "ming",
                             state: "all"
                         }, {
+                            operator: "read",
                             username: "flash",
                             state: "all"
                         }]
@@ -992,10 +1009,12 @@ describe("Bounce", function () {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
                         bounce.updatePermissions("/planets/" + documentId, {
                             _inherit: "/planets",
-                            write: [{
+                            rules: [{
+                                operator: "write",
                                 username: "ming",
                                 state: "all"
                             }, {
+                                operator: "write",
                                 username: "flash",
                                 state: "all"
                             }]
@@ -1021,17 +1040,20 @@ describe("Bounce", function () {
                     bounce.getDocument("planets", documentId, authenticatedUser, function (err, document) {
                         bounce.updatePermissions("/planets/" + documentId, {
                             _inherit: "/planets",
-                            read: [{
+                            rules: [{
+                                operator: "read",
                                 username: "ming",
                                 state: "all"
                             }, {
+                                operator: "read",
                                 username: "flash",
                                 state: "all"
-                            }],
-                            write: [{
+                            }, {
+                                operator: "write",
                                 username: "ming",
                                 state: "all"
                             }, {
+                                operator: "write",
                                 username: "flash",
                                 state: "all"
                             }]

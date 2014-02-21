@@ -26,7 +26,8 @@
         "bcrypt": "~0.7.7",
         "request": "~2.33.0",
         "parse-links": "~0.1.0",
-        "body-parser": "~1.0.0"
+        "body-parser": "~1.0.0",
+        "tv4": "~1.0.15"
     },
     "devDependencies": {
         "mocha": "1.17.x",
