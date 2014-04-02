@@ -18,3 +18,11 @@ Clone this repository, start MongoDB, and run
 
     npm install
     ./bin/bounce --port 27080 --connection-string mongodb://localhost/bounce
+
+
+Clients
+-------
+
+- [bounce.js](https://github.com/agrueneberg/Bounce/tree/master/client/browser) (for browsers)
+- [Bouncer](https://github.com/drobbins/Bouncer) (for browsers, based on AngularJS)
+- [bounce.json.postman_collection](https://github.com/agrueneberg/Bounce/tree/master/client/postman) (for Postman)
