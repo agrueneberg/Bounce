@@ -101,15 +101,6 @@
             responseHeaders: corser.simpleResponseHeaders.concat(["Link", "Location"])
         }));
 
-     // Terminate CORS preflights.
-        app.use(function (req, res, next) {
-            if (req.method === "OPTIONS") {
-                res.send(204);
-            } else {
-                next();
-            }
-        });
-
      // Deploy routes.
         app.use(app.router);
 
